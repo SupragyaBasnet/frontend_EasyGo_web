@@ -1,0 +1,136 @@
+/* General Container Styling */
+.affordable-container {
+  font-family: 'Verdana', sans-serif;
+  color: #333333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+}
+
+/* Header Styling */
+.affordable-header {
+  background-color: #4caf50;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+  height: 15vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.header-content p {
+  margin-top: 10px;
+  font-size: 1rem;
+  font-style: normal;
+}
+
+/* Image Section */
+.affordable-image-container {
+  text-align: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.affordable-image {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.affordable-image:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Details Section */
+.affordable-details {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 900px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.affordable-details h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #4caf50;
+}
+
+.affordable-details p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 30px;
+  color: #666666;
+}
+
+.features-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.feature {
+  flex: 1;
+  min-width: 250px;
+  background: #e8f5e9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.feature h3 {
+  font-size: 1.4rem;
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #555555;
+}
+
+/* Footer Styling */
+.affordable-footer {
+  margin-top: auto;
+  background-color: #333333;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 0.9rem;
+  border-top: 3px solid #4caf50;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features-wrapper {
+    flex-direction: column;
+  }
+
+  .feature {
+    margin-bottom: 20px;
+  }
+}
