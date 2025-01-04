@@ -34,9 +34,14 @@ const Home = () => {
         <div className={styles.headerTop}>
           <img src={EasyGo} alt="EasyGo Logo" className={styles.appLogo} />
           <div className={styles.headerButtons}>
-            <button className={styles.loginButton}>Login</button>
-            <button className={styles.signupButton}>Sign Up</button>
-          </div>
+  <button className={styles.loginButton} onClick={() => navigate('/login')}>
+    Login
+  </button>
+  <button className={styles.signupButton} onClick={() => navigate('/signup')}>
+    Sign Up
+  </button>
+</div>
+
         </div>
         <div className={styles.headerImage}>
           <img src={currentCarImage} alt="Car" className={styles.ctaImageFullscreen} />
