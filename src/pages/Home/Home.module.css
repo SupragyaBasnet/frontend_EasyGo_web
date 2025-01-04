@@ -71,7 +71,6 @@
 .headline {
   text-align: center;
   font-size: 2.5rem; /* Large font size for emphasis */
-  /* font-weight: bold; */
   color: #0c0c0c; /* Bright blue to match the theme */
   margin-bottom: 30px; /* Space below the headline */
   text-transform: uppercase; /* Optional for all caps styling */
