@@ -2,12 +2,12 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import CaptainLogin from "./pages/CaptainLogin";
 import CaptainSignup from "./pages/CaptainSignup";
-import Home from "./pages/Home/Home";
+import Home from "./pages/Home";
 import UserLogin from "./pages/UserLogin";
 import UserSignup from "./pages/UserSignup";
-import Affordable from "./pages/Affordable/Affordable";
-import Safety from "./pages/Safety/Safety";
-import Tracking from "./pages/Tracking/Tracking";
+import Affordable from "./pages/Affordable";
+import Safety from "./pages/Safety";
+import Tracking from "./pages/Tracking";
 
 const App = () => {
   return (

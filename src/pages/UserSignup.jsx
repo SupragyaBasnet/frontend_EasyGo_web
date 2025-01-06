@@ -17,23 +17,34 @@ const UserSignup = () => {
             />
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-4 sm:text-2xl">
-          Create Your Account
+        <h3 className="text-xl font-semibold mb-4 sm:text-xl">
+          Create Your Account as a Passenger
         </h3>
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
-            Full Name
+            What's your First Name
           </label>
           <input
             required
             type="text"
-            placeholder="Enter your full name"
+            placeholder="Enter your first name"
             className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
-            Phone Number
+            What's your Last Name
+          </label>
+          <input
+            required
+            type="text"
+            placeholder="Enter your last name"
+            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">
+            What's your Phone Number
           </label>
           <div className="flex items-center border border-gray-400 rounded focus-within:ring-2 focus-within:ring-blue-500">
             <span className="bg-gray-200 text-gray-500 px-3 py-3 rounded-l">
