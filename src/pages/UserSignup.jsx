@@ -1,6 +1,8 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
+import { UserDataContext } from "../context/userContext";
 
 const UserSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
@@ -10,17 +12,29 @@ const UserSignup = () => {
   const [userData, setUserData] = useState({});
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const submitHandler = (e) => {
+  const {user, setUser}=React.useContext(UserDataContext)
+
+  const submitHandler = async(e) => {
     e.preventDefault();
-    setUserData({
-      fullName: {
-        firstName: firstName,
-        lastName: lastName,
+    const newUser = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
       },
       phonenumber: phonenumber,
       password: password,
-    });
-    console.log(userData);
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`,newUser)
+    if(response.status === 201){
+      const data = response.data
+      setUser(data.user)
+
+      navigate('/home')
+
+
+    }
+
+
 
     setPhonenumber("");
     setFirstName("");
@@ -116,7 +130,7 @@ const UserSignup = () => {
             type="submit"
             className="bg-blue-500 text-white px-5 py-3 rounded w-full hover:bg-blue-600 transition-all duration-300"
           >
-            Sign Up
+            Create Account
           </button>
           <p className="text-center">
             Already have an account?{" "}

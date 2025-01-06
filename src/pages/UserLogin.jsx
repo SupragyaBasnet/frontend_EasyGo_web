@@ -1,19 +1,32 @@
+import axios from 'axios';
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
-
+import { UserDataContext } from "../context/userContext";
 const UserLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState({});
   const navigate = useNavigate(); // Initialize useNavigate
+  const {user, setUser}=React.useContext(UserDataContext)
 
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault();
-    setUserData({
+    const userData = {
       phonenumber: phonenumber,
-      password: password,
-    });
+      password: password
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`,userData)
+    if(response.status === 200){
+      const data = response.data
+      setUser(data.user)
+
+      navigate('/home')
+
+
+    }
+
+
     setPhonenumber("");
     setPassword("");
   };
