@@ -1,13 +1,14 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
 const UserSignup = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   return (
     <div className="p-7 max-w-md mx-auto mt-10 sm:max-w-lg lg:max-w-xl">
       <form className="bg-gradient-to-b from-gray-100 to-gray-300 shadow-md rounded-lg p-5 sm:p-8">
+        {/* Logo Section */}
         <div className="text-center mb-6">
           <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto flex items-center justify-center shadow-md">
             <img
@@ -17,31 +18,33 @@ const UserSignup = () => {
             />
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-4 sm:text-xl">
+
+        <h3 className="text-xl font-semibold mb-6 text-gray-800 sm:text-2xl">
           Create Your Account as a Passenger
         </h3>
+
+        {/* Name Fields */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
-            What's your First Name
+            What's your Name
           </label>
-          <input
-            required
-            type="text"
-            placeholder="Enter your first name"
-            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              required
+              type="text"
+              placeholder="First Name"
+              className="bg-white rounded px-4 py-2 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <input
+              required
+              type="text"
+              placeholder="Last Name"
+              className="bg-white rounded px-4 py-2 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            What's your Last Name
-          </label>
-          <input
-            required
-            type="text"
-            placeholder="Enter your last name"
-            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+
+        {/* Phone Number */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
             What's your Phone Number
@@ -59,6 +62,8 @@ const UserSignup = () => {
             />
           </div>
         </div>
+
+        {/* Password */}
         <div className="mb-6">
           <label className="block text-gray-700 font-medium mb-2">
             Password
@@ -70,6 +75,8 @@ const UserSignup = () => {
             className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+
+        {/* Buttons */}
         <div className="flex flex-col gap-4">
           <button
             type="submit"
@@ -85,7 +92,7 @@ const UserSignup = () => {
           </p>
           <button
             type="button"
-            className="bg-[#10b461] text-white px-5 py-3 rounded w-full hover:bg-green-500 transition-all duration-300"
+            className="bg-green-500 text-white px-5 py-3 rounded w-full hover:bg-green-600 transition-all duration-300"
             onClick={() => navigate("/captain-signup")} // Navigate to CaptainSignup
           >
             Sign up as Captain
