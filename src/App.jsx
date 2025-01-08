@@ -9,6 +9,8 @@ import Affordable from "./pages/Affordable";
 import Safety from "./pages/Safety";
 import Tracking from "./pages/Tracking";
 import Home from "./pages/Home";
+import UserProtectWrapper from "./pages/UserProtectedWrapper";
+import UserLogout from "./pages/UserLogout";
 
 const App = () => {
   return (
@@ -22,7 +24,8 @@ const App = () => {
         <Route path="/affordable" element={<Affordable />} />
         <Route path="/safety" element={<Safety />} />
         <Route path="/tracking" element={<Tracking />} />
-        <Route path='/home' element={<Home/>}/>
+        <Route path='/home' element={<UserProtectWrapper><Home/></UserProtectWrapper>}/>
+        <Route path='/user/logout' element={<UserProtectWrapper><UserLogout/></UserProtectWrapper>}></Route>
       </Routes>
     </div>
   );
