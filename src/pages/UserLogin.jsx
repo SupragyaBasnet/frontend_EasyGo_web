@@ -1,35 +1,51 @@
 import axios from 'axios';
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
-import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
+import { Link, useNavigate } from "react-router-dom";
+import EasyGoLogo from "../assets/EasyGo.png";
 import { UserDataContext } from "../context/userContext";
+
 const UserLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
-  const [userData, setUserData] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
-  const {user, setUser}=React.useContext(UserDataContext)
+  const [errorMessage, setErrorMessage] = useState(""); // Error message state
+  const navigate = useNavigate();
+  const { user, setUser } = React.useContext(UserDataContext);
 
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+    setErrorMessage(""); // Reset error message
+
     const userData = {
       phonenumber: phonenumber,
-      password: password
+      password: password,
     };
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/login`,userData)
-    if(response.status === 200){
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token',data.token)
 
-      navigate('/home')
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/login`,
+        userData
+      );
 
-
+      if (response.status === 200) {
+        const data = response.data;
+        setUser(data.user);
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      }
+    } catch (error) {
+      // Handle errors
+      if (error.response) {
+        // Backend returned an error response
+        const { message } = error.response.data;
+        setErrorMessage(message || "Login failed. Please try again.");
+      } else {
+        // Network or other errors
+        setErrorMessage("An error occurred. Please check your connection.");
+      }
+    } finally {
+      setPhonenumber("");
+      setPassword("");
     }
-
-
-    setPhonenumber("");
-    setPassword("");
   };
 
   return (
@@ -57,9 +73,7 @@ const UserLogin = () => {
           <input
             required
             value={phonenumber}
-            onChange={(e) => {
-              setPhonenumber(e.target.value);
-            }}
+            onChange={(e) => setPhonenumber(e.target.value)}
             type="tel"
             placeholder="**********"
             className="p-3 rounded-r w-full focus:outline-none"
@@ -70,13 +84,14 @@ const UserLogin = () => {
         <input
           required
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={(e) => setPassword(e.target.value)}
           type="password"
           placeholder="Password"
           className="border border-gray-400 p-3 rounded w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {errorMessage && (
+          <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
+        )}
         <div className="flex flex-col gap-4">
           <button
             type="submit"
@@ -93,7 +108,7 @@ const UserLogin = () => {
           <button
             type="button"
             className="bg-[#10b461] text-white px-5 py-3 rounded w-full hover:bg-green-500 transition-all duration-300"
-            onClick={() => navigate("/captain-login")} // Navigate to CaptainLogin
+            onClick={() => navigate("/captain-login")}
           >
             Sign in as Captain
           </button>

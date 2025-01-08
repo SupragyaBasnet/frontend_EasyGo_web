@@ -1,6 +1,9 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
+import { CaptainDataContext } from "../context/CaptainContext";
+
 
 const CaptainSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
@@ -14,23 +17,35 @@ const CaptainSignup = () => {
   const [captainData, setCaptainData] = useState({});
   const navigate = useNavigate();
 
-  const submitHandler = (e) => {
+  const {captain, setCaptain}=React.useContext(CaptainDataContext)
+
+  const submitHandler = async(e) => {
     e.preventDefault();
-    setCaptainData({
-      fullName: {
-        firstName,
-        lastName,
+    const captainData = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
       },
-      phonenumber,
-      password,
-      vehicleDetails: {
+      phonenumber: phonenumber,
+      password: password,
+      vehicle: {
         color: vehicleColor,
         plate: vehiclePlate,
         capacity: vehicleCapacity,
-        type: vehicleType,
+        vehicleType: vehicleType,
       },
-    });
-    console.log(captainData);
+    };
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,captainData)
+    if(response.status === 201){
+      const data = response.data
+      setCaptain(data.captain)
+      localStorage.setItem('token',data.token)
+
+      navigate('/captain-home')
+
+
+    }
+
 
     setPhonenumber("");
     setFirstName("");
@@ -179,9 +194,9 @@ const CaptainSignup = () => {
               className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Vehicle</option>
-              <option>Car</option>
-              <option>Bike</option>
-              <option>Auto</option>
+              <option>car</option>
+              <option>motorcycle</option>
+              <option>auto</option>
             </select>
           </div>
         </div>

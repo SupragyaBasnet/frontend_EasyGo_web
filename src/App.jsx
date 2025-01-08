@@ -1,17 +1,18 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import CaptainLogin from "./pages/CaptainLogin";
-import CaptainSignup from "./pages/CaptainSignup";
-import Start from "./pages/Start";
-import UserLogin from "./pages/UserLogin";
-import UserSignup from "./pages/UserSignup";
 import Affordable from "./pages/Affordable";
-import Safety from "./pages/Safety";
-import Tracking from "./pages/Tracking";
+import CaptainHome from "./pages/CaptainHome";
+import CaptainLogin from "./pages/CaptainLogin";
+import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
+import CaptainSignup from "./pages/CaptainSignup";
 import Home from "./pages/Home";
-import UserProtectWrapper from "./pages/UserProtectedWrapper";
+import Safety from "./pages/Safety";
+import Start from "./pages/Start";
+import Tracking from "./pages/Tracking";
+import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
-
+import UserProtectWrapper from "./pages/UserProtectWrapper";
+import UserSignup from "./pages/UserSignup";
 const App = () => {
   return (
     <div>
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/tracking" element={<Tracking />} />
         <Route path='/home' element={<UserProtectWrapper><Home/></UserProtectWrapper>}/>
         <Route path='/user/logout' element={<UserProtectWrapper><UserLogout/></UserProtectWrapper>}></Route>
+        <Route path='/captain-home' element={<CaptainProtectWrapper><CaptainHome/></CaptainProtectWrapper>}/>
       </Routes>
     </div>
   );

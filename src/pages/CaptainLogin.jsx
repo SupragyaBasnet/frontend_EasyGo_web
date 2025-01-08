@@ -1,24 +1,54 @@
+import axios from "axios"; // Import axios for API calls
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
 
+
+import { CaptainDataContext } from '../context/CaptainContext';
 const CaptainLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
-  const [CaptainData, setCaptainData] = useState({});
-  // const navigate = useNavigate(); // Initialize useNavigate
+  const [errorMessage, setErrorMessage] = useState(""); // State for error messages
+  const navigate = useNavigate(); // Initialize useNavigate
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setCaptainData({
+    setErrorMessage(""); // Reset error message
+
+    const captain = {
       phonenumber: phonenumber,
       password: password,
-    });
-    setPhonenumber("");
-    setPassword("");
-  };
+    };
 
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captain
+      );
+
+      if (response.status === 200) {
+        const data = response.data;
+        setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+        navigate("/captain-home");
+      }
+    } catch (error) {
+      // Handle errors
+      if (error.response) {
+        // Backend returned an error response
+        const { message } = error.response.data;
+        setErrorMessage(message || "Login failed. Please try again.");
+      } else {
+        // Network or other errors
+        setErrorMessage("An error occurred. Please check your connection.");
+      }
+    } finally {
+      setPhonenumber("");
+      setPassword("");
+    }
+  };
   return (
     <div className="p-7 max-w-md mx-auto mt-10 sm:max-w-lg lg:max-w-xl">
       <form
@@ -44,9 +74,7 @@ const CaptainLogin = () => {
           <input
             required
             value={phonenumber}
-            onChange={(e) => {
-              setPhonenumber(e.target.value);
-            }}
+            onChange={(e) => setPhonenumber(e.target.value)}
             type="tel"
             placeholder="**********"
             className="p-3 rounded-r w-full focus:outline-none"
@@ -57,13 +85,14 @@ const CaptainLogin = () => {
         <input
           required
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
+          onChange={(e) => setPassword(e.target.value)}
           type="password"
           placeholder="Password"
           className="border border-gray-400 p-3 rounded w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {errorMessage && (
+          <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
+        )}
         <div className="flex flex-col gap-4">
           <button
             type="submit"
@@ -73,14 +102,17 @@ const CaptainLogin = () => {
           </button>
           <p className="text-center">
             New here?{" "}
-            <Link to="/captain-signup" className="text-blue-600 hover:underline">
+            <Link
+              to="/captain-signup"
+              className="text-blue-600 hover:underline"
+            >
               Create new account as a Rider
             </Link>
           </p>
           <button
             type="button"
             className="bg-[#d5622d] text-white px-5 py-3 rounded w-full hover:bg-orange-500 transition-all duration-300"
-            onClick={() => navigate("/login")} // Navigate to CaptainLogin
+            onClick={() => navigate("/login")}
           >
             Sign in as Passenger
           </button>
