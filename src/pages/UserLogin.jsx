@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png";
-import { UserDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/UserContext";
 
 const UserLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");

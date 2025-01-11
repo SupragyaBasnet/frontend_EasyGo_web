@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
-import { UserDataContext } from "../context/userContext";
+import { UserDataContext } from "../context/UserContext.jsx";
 
 const UserSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
@@ -12,34 +12,35 @@ const UserSignup = () => {
   const [userData, setUserData] = useState({});
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const {user, setUser}=React.useContext(UserDataContext)
+  const { user, setUser } = React.useContext(UserDataContext);
 
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+
     const newUser = {
       fullname: {
         firstname: firstName,
         lastname: lastName,
       },
-      phonenumber: phonenumber,
-      password: password,
+      phonenumber,
+      password,
     };
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`,newUser)
-    if(response.status === 201){
-      const data = response.data
-      setUser(data.user)
-      localStorage.setItem('token',data.token)
 
-      navigate('/home')
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/users/register`,
+      newUser
+    );
 
-
+    if (response.status === 201) {
+      const data = response.data;
+      setUser(data.user);
+      localStorage.setItem("token", data.token);
+      navigate("/home");
     }
 
-
-
-    setPhonenumber("");
     setFirstName("");
     setLastName("");
+    setPhonenumber("");
     setPassword("");
   };
 

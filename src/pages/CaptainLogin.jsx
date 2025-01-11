@@ -3,9 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
-
-
-import { CaptainDataContext } from '../context/CaptainContext';
+import { CaptainDataContext } from "../context/CaptainContext.jsx";
 const CaptainLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
