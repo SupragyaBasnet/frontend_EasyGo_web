@@ -10,39 +10,33 @@ const UserLogin = () => {
   const [errorMessage, setErrorMessage] = useState(""); // Error message state
   const navigate = useNavigate();
   const { user, setUser } = React.useContext(UserDataContext);
-
   const submitHandler = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); // Reset error message
-
+    setErrorMessage("");
+  
     const userData = {
       phonenumber: phonenumber,
       password: password,
     };
-
+  
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/users/login`,
         userData
       );
-
+  
       if (response.status === 200) {
         const data = response.data;
-        setUser(data.user);
-        localStorage.setItem("token", data.token);
-        navigate("/home");
+        setUser(data.user); // Update context
+        localStorage.setItem("token", data.token); // Store token
+        navigate("/home"); // Redirect to protected route
       }
     } catch (error) {
-      // Handle errors
-      if (error.response) {
-        // Backend returned an error response
-        const { message } = error.response.data;
-        setErrorMessage(message || "Login failed. Please try again.");
-      } else {
-        // Network or other errors
-        setErrorMessage("An error occurred. Please check your connection.");
-      }
-    } finally {
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      setErrorMessage(message);
+    }
+   finally {
       setPhonenumber("");
       setPassword("");
     }
@@ -93,6 +87,12 @@ const UserLogin = () => {
           <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
         )}
         <div className="flex flex-col gap-4">
+          <Link
+            to="/forgot-password"
+            className="text-blue-600 text-center hover:underline"
+          >
+            Forgot Password?
+          </Link>
           <button
             type="submit"
             className="bg-blue-500 text-white px-5 py-3 rounded w-full hover:bg-blue-600 transition-all duration-300"
@@ -117,5 +117,6 @@ const UserLogin = () => {
     </div>
   );
 };
+
 
 export default UserLogin;

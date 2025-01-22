@@ -35,17 +35,21 @@ const CaptainSignup = () => {
         vehicleType: vehicleType,
       },
     };
-    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`,captainData)
-    if(response.status === 201){
-      const data = response.data
-      setCaptain(data.captain)
-      localStorage.setItem('token',data.token)
-
-      navigate('/captain-home')
-
-
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData);
+      console.log("API Response:", response);
+      if (response.status === 201) {
+        const data = response.data;
+        setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+        console.log("Navigating to /captain-home");
+        navigate("/captain-home");
+      } else {
+        console.error("Unexpected response status:", response.status);
+      }
+    } catch (error) {
+      console.error("Signup failed:", error);
     }
-
 
     setPhonenumber("");
     setFirstName("");
