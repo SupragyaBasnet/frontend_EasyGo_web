@@ -7,6 +7,7 @@ import { CaptainDataContext } from "../context/CaptainContext.jsx";
 
 const CaptainSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -26,8 +27,9 @@ const CaptainSignup = () => {
         firstname: firstName,
         lastname: lastName,
       },
-      phonenumber: phonenumber,
-      password: password,
+      phonenumber,
+      email,
+      password,
       vehicle: {
         color: vehicleColor,
         plate: vehiclePlate,
@@ -52,6 +54,7 @@ const CaptainSignup = () => {
     }
 
     setPhonenumber("");
+    setEmail("");
     setFirstName("");
     setLastName("");
     setPassword("");
@@ -105,6 +108,18 @@ const CaptainSignup = () => {
               className="bg-white rounded px-4 py-2 border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+        </div>
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">What's your Email</label>
+          <input
+            required
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
         {/* Phone Number */}
