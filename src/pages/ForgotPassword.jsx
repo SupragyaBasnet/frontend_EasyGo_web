@@ -1,6 +1,8 @@
-import React, { useState } from "react";
 import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Replace with your actual logo path
+import { Eye, EyeOff } from "lucide-react"; // Import eye icons
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -8,13 +10,24 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false); // Toggle for new password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Toggle for confirm password visibility
   const [step, setStep] = useState(1);
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState(""); // "success" or "error"
+
+  const navigate = useNavigate();
+
+  // Check password strength
+  const isPasswordStrong = (password) =>
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
   // Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setMessage("");
+    setStatus("");
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/forgot-password/send-otp`,
@@ -25,9 +38,11 @@ const ForgotPassword = () => {
         }
       );
       setMessage(response.data.message || "OTP sent successfully!");
+      setStatus("success");
       setStep(2);
     } catch (error) {
       setMessage(error.response?.data?.message || "Failed to send OTP.");
+      setStatus("error");
     }
   };
 
@@ -35,19 +50,23 @@ const ForgotPassword = () => {
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
     setMessage("");
+    setStatus("");
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/forgot-password/verify-otp`,
-        { email, otp },
+        { email: email.toLowerCase(), otp },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
         }
       );
       setMessage(response.data.message || "OTP verified successfully!");
+      setStatus("success");
       setStep(3);
     } catch (error) {
       setMessage(error.response?.data?.message || "Invalid or expired OTP.");
+      setStatus("error");
     }
   };
 
@@ -55,23 +74,42 @@ const ForgotPassword = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setMessage("");
-    if (newPassword !== confirmPassword) {
-      setMessage("Passwords do not match.");
+    setStatus("");
+
+    if (!isPasswordStrong(newPassword)) {
+      setMessage(
+        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      setStatus("error");
       return;
     }
+
+    if (newPassword !== confirmPassword) {
+      setMessage("Passwords do not match.");
+      setStatus("error");
+      return;
+    }
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/forgot-password/reset-password`,
-        { email, otp, password: newPassword, userType },
+        { email: email.toLowerCase(), otp, password: newPassword, userType },
         {
           withCredentials: true,
           headers: { "Content-Type": "application/json" },
         }
       );
       setMessage(response.data.message || "Password reset successfully!");
-      setStep(1);
+      setStatus("success");
+
+      if (userType === "user") {
+        navigate("/home");
+      } else if (userType === "captain") {
+        navigate("/captain-home");
+      }
     } catch (error) {
       setMessage(error.response?.data?.message || "Failed to reset password.");
+      setStatus("error");
     }
   };
 
@@ -163,27 +201,43 @@ const ForgotPassword = () => {
               <label className="block text-gray-700 font-medium mb-2">
                 New Password
               </label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-                required
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  required
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? <Eye /> : <EyeOff />}
+                </span>
+              </div>
             </div>
             <div>
               <label className="block text-gray-700 font-medium mb-2">
                 Confirm Password
               </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                required
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your password"
+                  required
+                  className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <span
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <Eye /> : <EyeOff />}
+                </span>
+              </div>
             </div>
             <button
               type="submit"
@@ -197,7 +251,7 @@ const ForgotPassword = () => {
         {message && (
           <p
             className={`mt-4 text-center ${
-              message.includes("Failed") ? "text-red-500" : "text-green-500"
+              status === "error" ? "text-red-500" : "text-green-500"
             }`}
           >
             {message}

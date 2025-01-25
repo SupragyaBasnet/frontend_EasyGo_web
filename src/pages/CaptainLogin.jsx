@@ -14,34 +14,37 @@ const CaptainLogin = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-  
-    const captain = {
-      phonenumber: phonenumber,
-      password: password,
-    };
-  
+
+    const captain = { phonenumber, password };
+
+    console.log("Attempting to login with:", captain);
+
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/captains/login`,
-        captain
-      );
-  
-      if (response.status === 200) {
-        const data = response.data;
-        setCaptain(data.captain); // Update context
-        localStorage.setItem("token", data.token); // Store token
-        navigate("/captain-home"); // Redirect to protected route
-      }
+        const response = await axios.post(
+            `${import.meta.env.VITE_BASE_URL}/captains/login`,
+            captain
+        );
+
+        console.log("Login response:", response.data);
+
+        if (response.status === 200) {
+            const data = response.data;
+            setCaptain(data.captain);
+            localStorage.setItem("token", data.token);
+            navigate("/captain-home");
+        }
     } catch (error) {
-      const message =
-        error.response?.data?.message || "Login failed. Please try again.";
-      setErrorMessage(message);
+        console.error("Login error:", error.response || error.message);
+        const message =
+            error.response?.data?.message || "Login failed. Please try again.";
+        setErrorMessage(message);
+    } finally {
+        setPhonenumber("");
+        setPassword("");
     }
-  finally {
-      setPhonenumber("");
-      setPassword("");
-    }
-  };
+};
+
+
   return (
     <div className="p-7 max-w-md mx-auto mt-10 sm:max-w-lg lg:max-w-xl">
       <form

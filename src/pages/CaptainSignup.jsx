@@ -1,27 +1,38 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
+import EasyGoLogo from "../assets/EasyGo.png";
+import { Eye, EyeOff } from "lucide-react"; // Import eye icons
 import { CaptainDataContext } from "../context/CaptainContext.jsx";
-
 
 const CaptainSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [vehicleColor, setVehicleColor] = useState("");
   const [vehiclePlate, setVehiclePlate] = useState("");
   const [vehicleCapacity, setVehicleCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
-  const [captainData, setCaptainData] = useState({});
   const navigate = useNavigate();
 
-  const {captain, setCaptain}=React.useContext(CaptainDataContext)
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
 
-  const submitHandler = async(e) => {
+  const isPasswordStrong = (password) =>
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (!isPasswordStrong(password)) {
+      alert(
+        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      return;
+    }
+
     const captainData = {
       fullname: {
         firstname: firstName,
@@ -37,31 +48,21 @@ const CaptainSignup = () => {
         vehicleType: vehicleType,
       },
     };
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/captains/register`, captainData);
-      console.log("API Response:", response);
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/register`,
+        captainData
+      );
       if (response.status === 201) {
         const data = response.data;
         setCaptain(data.captain);
         localStorage.setItem("token", data.token);
-        console.log("Navigating to /captain-home");
         navigate("/captain-home");
-      } else {
-        console.error("Unexpected response status:", response.status);
       }
     } catch (error) {
       console.error("Signup failed:", error);
     }
-
-    setPhonenumber("");
-    setEmail("");
-    setFirstName("");
-    setLastName("");
-    setPassword("");
-    setVehicleColor("");
-    setVehiclePlate("");
-    setVehicleCapacity("");
-    setVehicleType("");
   };
 
   return (
@@ -70,26 +71,16 @@ const CaptainSignup = () => {
         onSubmit={submitHandler}
         className="bg-gradient-to-b from-gray-100 to-gray-300 shadow-md rounded-lg p-5 sm:p-8"
       >
-        {/* Logo Section */}
         <div className="text-center mb-6">
           <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto flex items-center justify-center shadow-md">
-            <img
-              src={EasyGoLogo}
-              alt="EasyGo Logo"
-              className="h-16 w-16 rounded-full"
-            />
+            <img src={EasyGoLogo} alt="EasyGo Logo" className="h-16 w-16 rounded-full" />
           </div>
         </div>
 
-        <h3 className="text-xl font-semibold mb-4 sm:text-2xl">
-          Create Rider's Account
-        </h3>
+        <h3 className="text-xl font-semibold mb-4 sm:text-2xl">Create Rider's Account</h3>
 
-        {/* Name Fields */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            What's our Captain's Name
-          </label>
+          <label className="block text-gray-700 font-medium mb-2">Captain's Name</label>
           <div className="grid grid-cols-2 gap-4">
             <input
               required
@@ -109,9 +100,9 @@ const CaptainSignup = () => {
             />
           </div>
         </div>
-        {/* Email */}
+
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">What's your Email</label>
+          <label className="block text-gray-700 font-medium mb-2">Email</label>
           <input
             required
             type="email"
@@ -122,15 +113,10 @@ const CaptainSignup = () => {
           />
         </div>
 
-        {/* Phone Number */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            What's our Captain's Phone Number
-          </label>
+          <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
           <div className="flex items-center border border-gray-400 rounded focus-within:ring-2 focus-within:ring-blue-500">
-            <span className="bg-gray-200 text-gray-500 px-3 py-3 rounded-l">
-              +977
-            </span>
+            <span className="bg-gray-200 text-gray-500 px-3 py-3 rounded-l">+977</span>
             <input
               required
               type="tel"
@@ -143,28 +129,30 @@ const CaptainSignup = () => {
           </div>
         </div>
 
-        {/* Password */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            Enter Password
-          </label>
-          <input
-            required
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <label className="block text-gray-700 font-medium mb-2">Password</label>
+          <div className="relative">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <Eye /> : <EyeOff />}
+            </span>
+          </div>
         </div>
 
-        {/* Vehicle Information */}
         <h4 className="font-semibold text-gray-700 mb-3">Vehicle Information</h4>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Vehicle Color
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Vehicle Color</label>
             <input
               required
               type="text"
@@ -175,9 +163,7 @@ const CaptainSignup = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Vehicle Plate
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Vehicle Plate</label>
             <input
               required
               type="text"
@@ -188,11 +174,10 @@ const CaptainSignup = () => {
             />
           </div>
         </div>
+
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Vehicle Capacity
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Vehicle Capacity</label>
             <input
               required
               type="number"
@@ -203,9 +188,7 @@ const CaptainSignup = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Select Vehicle
-            </label>
+            <label className="block text-gray-700 font-medium mb-2">Select Vehicle</label>
             <select
               required
               value={vehicleType}
@@ -220,7 +203,6 @@ const CaptainSignup = () => {
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex flex-col gap-4">
           <button
             type="submit"

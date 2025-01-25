@@ -2,21 +2,32 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
+import { Eye, EyeOff } from "lucide-react"; // Import eye icons
 import { UserDataContext } from "../context/UserContext.jsx";
 
 const UserSignup = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userData, setUserData] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const { user, setUser } = React.useContext(UserDataContext);
 
+  const isPasswordStrong = (password) =>
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (!isPasswordStrong(password)) {
+      alert(
+        "Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      return;
+    }
 
     const newUser = {
       fullname: {
@@ -28,23 +39,21 @@ const UserSignup = () => {
       password,
     };
 
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/users/register`,
-      newUser
-    );
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/users/register`,
+        newUser
+      );
 
-    if (response.status === 201) {
-      const data = response.data;
-      setUser(data.user);
-      localStorage.setItem("token", data.token);
-      navigate("/home");
+      if (response.status === 201) {
+        const data = response.data;
+        setUser(data.user);
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Signup failed:", error);
     }
-
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setPhonenumber("");
-    setPassword("");
   };
 
   return (
@@ -128,17 +137,23 @@ const UserSignup = () => {
 
         {/* Password */}
         <div className="mb-6">
-          <label className="block text-gray-700 font-medium mb-2">
-            Password
-          </label>
-          <input
-            required
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <label className="block text-gray-700 font-medium mb-2">Password</label>
+          <div className="relative">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <Eye /> : <EyeOff />}
+            </span>
+          </div>
         </div>
 
         {/* Buttons */}
