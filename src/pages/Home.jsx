@@ -42,20 +42,26 @@ const Home = () => {
   const { user } = useContext(UserDataContext);
 
   useEffect(() => {
-    socket.emit("join", { userType: "user", userId: user._id });
-  }, [user]);
-
-  socket.on("ride-confirmed", (ride) => {
-    setVehicleFound(false);
-    setWaitingForDriver(true);
-    setRide(ride);
-  });
-
-  socket.on("ride-started", (ride) => {
-    setWaitingForDriver(false);
-    navigate("/riding", { state: { ride } });
-  });
-
+    if (socket) {
+      socket.emit("join", { userType: "user", userId: user?._id });
+  
+      socket.on("ride-confirmed", (ride) => {
+        setVehicleFound(false);
+        setWaitingForDriver(true);
+        setRide(ride);
+      });
+  
+      socket.on("ride-started", (ride) => {
+        setWaitingForDriver(false);
+        navigate("/riding", { state: { ride } });
+      });
+  
+      return () => {
+        socket.off("ride-confirmed");
+        socket.off("ride-started");
+      };
+    }
+  }, [socket, user]);
   const handlePickupChange = async (e) => {
     setPickup(e.target.value);
     try {

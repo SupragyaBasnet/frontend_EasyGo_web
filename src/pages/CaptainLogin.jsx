@@ -4,9 +4,12 @@ import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavi
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
 import { CaptainDataContext } from "../context/CaptainContext.jsx";
+import { Eye, EyeOff } from "lucide-react"; // Import eye icons
+
 const CaptainLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
   const [errorMessage, setErrorMessage] = useState(""); // State for error messages
   const navigate = useNavigate(); // Initialize useNavigate
   const { captain, setCaptain } = React.useContext(CaptainDataContext);
@@ -20,30 +23,29 @@ const CaptainLogin = () => {
     console.log("Attempting to login with:", captain);
 
     try {
-        const response = await axios.post(
-            `${import.meta.env.VITE_BASE_URL}/captains/login`,
-            captain
-        );
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/captains/login`,
+        captain
+      );
 
-        console.log("Login response:", response.data);
+      console.log("Login response:", response.data);
 
-        if (response.status === 200) {
-            const data = response.data;
-            setCaptain(data.captain);
-            localStorage.setItem("token", data.token);
-            navigate("/captain-home");
-        }
+      if (response.status === 200) {
+        const data = response.data;
+        setCaptain(data.captain);
+        localStorage.setItem("token", data.token);
+        navigate("/captain-home");
+      }
     } catch (error) {
-        console.error("Login error:", error.response || error.message);
-        const message =
-            error.response?.data?.message || "Login failed. Please try again.";
-        setErrorMessage(message);
+      console.error("Login error:", error.response || error.message);
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
+      setErrorMessage(message);
     } finally {
-        setPhonenumber("");
-        setPassword("");
+      setPhonenumber("");
+      setPassword("");
     }
-};
-
+  };
 
   return (
     <div className="p-7 max-w-md mx-auto mt-10 sm:max-w-lg lg:max-w-xl">
@@ -77,15 +79,25 @@ const CaptainLogin = () => {
             pattern="[0-9]{10}"
           />
         </div>
-        <h3 className="block text-gray-700 font-medium mb-2">Enter Password</h3>
-        <input
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          type="password"
-          placeholder="Password"
-          className="border border-gray-400 p-3 rounded w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium mb-2">Password</label>
+          <div className="relative">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span
+              className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+            </span>
+          </div>
+        </div>
         {errorMessage && (
           <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
         )}

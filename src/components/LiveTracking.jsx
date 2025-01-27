@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import React, { useEffect, useState } from "react";
+import { MapContainer, Marker, TileLayer } from "react-leaflet";
 
 const center = { lat: 27.7061835, lng: 85.3300086 }; // Default position
 
@@ -7,16 +7,30 @@ const LiveTracking = () => {
   const [currentPosition, setCurrentPosition] = useState(center);
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      setCurrentPosition({ lat: latitude, lng: longitude });
-    });
+    // Request the user's current position
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition({ lat: latitude, lng: longitude });
+      },
+      (error) => {
+        console.error("Geolocation error:", error.message);
+        setCurrentPosition(center); // Fallback to the default position
+      }
+    );
 
-    const watchId = navigator.geolocation.watchPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      setCurrentPosition({ lat: latitude, lng: longitude });
-    });
+    // Watch the user's position for real-time updates
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition({ lat: latitude, lng: longitude });
+      },
+      (error) => {
+        console.error("Geolocation watch error:", error.message);
+      }
+    );
 
+    // Cleanup the geolocation watcher when the component unmounts
     return () => navigator.geolocation.clearWatch(watchId);
   }, []);
 
