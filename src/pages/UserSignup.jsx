@@ -1,8 +1,8 @@
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react"; // Import eye icons
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
-import { Eye, EyeOff } from "lucide-react"; // Import eye icons
 import { UserDataContext } from "../context/UserContext.jsx";
 
 const UserSignup = () => {
@@ -52,7 +52,12 @@ const UserSignup = () => {
         navigate("/home");
       }
     } catch (error) {
-      console.error("Signup failed:", error);
+      if (error.response && error.response.status === 400) {
+        // Show pop-up alert or set error message
+        alert(error.response.data.message); // Displays "User already exists"
+      } else {
+        alert("Signup failed. Please try again.");
+      }
     }
   };
 

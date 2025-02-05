@@ -103,11 +103,14 @@ const CaptainHome = () => {
   return (
     <div className="h-screen">
       <div className="fixed p-6 top-0 flex items-center justify-between w-screen">
-        <img
-          className="w-16"
-          src={EasyGoLogo} // Use the EasyGo logo from assets
-          alt="EasyGo Logo"
-        />
+        {/* EasyGo Logo */}
+        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md">
+          <img
+            className="h-12 w-12 rounded-full"
+            src={EasyGoLogo}
+            alt="EasyGo Logo"
+          />
+        </div>
         <Link
           to="/captain-home"
           className=" h-10 w-10 bg-white flex items-center justify-center rounded-full"
@@ -151,3 +154,4 @@ const CaptainHome = () => {
 };
 
 export default CaptainHome;
+

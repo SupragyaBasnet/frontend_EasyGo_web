@@ -11,11 +11,11 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <CaptainContext>
       <UserContext>
-      <SocketProvider>
+      {/* <SocketProvider> */}
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </SocketProvider>
+      {/* </SocketProvider> */}
       </UserContext>
     </CaptainContext>
   </StrictMode>
