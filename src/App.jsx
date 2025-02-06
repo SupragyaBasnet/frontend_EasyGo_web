@@ -13,6 +13,10 @@ import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
+import Affordable from "./pages/Affordable";
+import Safety from "./pages/Safety";
+import Tracking from "./pages/Tracking";
+import CaptainRiding from "./pages/CaptainRiding";
 
 const App = () => {
   return (
@@ -20,19 +24,22 @@ const App = () => {
       <Routes>
         {/* Start Page */}
         <Route path="/" element={<Start />} />
+        <Route path="/affordable" element={<Affordable />} />
+        <Route path="/safety" element={<Safety />} />
+        <Route path="/tracking" element={<Tracking />} />
 
         {/* User Routes */}
         <Route path="/login" element={<UserLogin />} />
         <Route path="/signup" element={<UserSignup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
-        path="/home"
-        element={
-          <UserProtectWrapper>
-            <Home />
-          </UserProtectWrapper>
-        }
-      />
+          path="/home"
+          element={
+            <UserProtectWrapper>
+              <Home />
+            </UserProtectWrapper>
+          }
+        />
         <Route
           path="/user/logout"
           element={
@@ -46,13 +53,13 @@ const App = () => {
         <Route path="/captain-login" element={<CaptainLogin />} />
         <Route path="/captain-signup" element={<CaptainSignup />} />
         <Route
-        path="/captain-home"
-        element={
-          <CaptainProtectWrapper>
-            <CaptainHome />
-          </CaptainProtectWrapper>
-        }
-      />
+          path="/captain-home"
+          element={
+            <CaptainProtectWrapper>
+              <CaptainHome />
+            </CaptainProtectWrapper>
+          }
+        />
         <Route
           path="/captain/logout"
           element={
@@ -64,10 +71,10 @@ const App = () => {
 
         {/* Riding Pages */}
         <Route path="/riding" element={<Riding />} />
+        <Route path="/captain-riding" element={<CaptainRiding />} />
       </Routes>
     </div>
   );
 };
 
 export default App;
-
