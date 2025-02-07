@@ -17,6 +17,7 @@ import Affordable from "./pages/Affordable";
 import Safety from "./pages/Safety";
 import Tracking from "./pages/Tracking";
 import CaptainRiding from "./pages/CaptainRiding";
+import { useContext } from "react";
 
 const App = () => {
   return (

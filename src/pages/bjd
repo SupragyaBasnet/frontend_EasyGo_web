@@ -1,22 +1,21 @@
+import React, { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
-import axios from "axios";
 import gsap from "gsap";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "remixicon/fonts/remixicon.css";
-import ConfirmRide from "../components/ConfirmRide";
 import LocationSearchPanel from "../components/LocationSearchPanel";
-import LookingForDriver from "../components/LookingForDriver";
 import VehiclePanel from "../components/VehiclePanel";
+import ConfirmRide from "../components/ConfirmRide";
+import LookingForDriver from "../components/LookingForDriver";
 import WaitingForDriver from "../components/WaitingForDriver";
 import { SocketContext } from "../context/SocketContext";
+import { useContext } from "react";
 import { UserDataContext } from "../context/UserContext";
+import { useNavigate } from "react-router-dom";
 import LiveTracking from "../components/LiveTracking";
-import EasyGoLogo from "../assets/EasyGo.png";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
-
   const [destination, setDestination] = useState("");
   const [panelOpen, setPanelOpen] = useState(false);
   const vehiclePanelRef = useRef(null);
@@ -34,7 +33,6 @@ const Home = () => {
   const [activeField, setActiveField] = useState(null);
   const [fare, setFare] = useState({});
   const [vehicleType, setVehicleType] = useState(null);
-  const [showMap, setShowMap] = useState(true);
   const [ride, setRide] = useState(null);
 
   const navigate = useNavigate();
@@ -43,48 +41,8 @@ const Home = () => {
   const { user } = useContext(UserDataContext);
 
   useEffect(() => {
-    if (user?._id) {
-      socket.emit("join", { userType: "user", userId: user._id });
-    }
-
-    // Automatically fetch current location on mount
-    getCurrentLocation();
+    socket.emit("join", { userType: "user", userId: user._id });
   }, [user]);
-
-  const getCurrentLocation = () => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by this browser.");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-
-        // Reverse geocoding API (OpenStreetMap's Nominatim)
-        try {
-          const response = await axios.get(
-            `https://nominatim.openstreetmap.org/reverse`,
-            {
-              params: {
-                format: "json",
-                lat: latitude,
-                lon: longitude,
-              },
-            }
-          );
-
-          const address = response.data.display_name;
-          setPickup(address); // Automatically set pickup field
-        } catch (error) {
-          console.error("Error fetching address from coordinates:", error);
-        }
-      },
-      (error) => {
-        console.error("Error getting current location:", error.message);
-      }
-    );
-  };
 
   socket.on("ride-confirmed", (ride) => {
     setVehicleFound(false);
@@ -128,17 +86,9 @@ const Home = () => {
           },
         }
       );
-
-      // Ensure response.data is an array
-      if (Array.isArray(response.data)) {
-        setDestinationSuggestions(response.data);
-      } else {
-        console.error("Unexpected API response:", response.data);
-        setDestinationSuggestions([]); // Fallback to empty array
-      }
-    } catch (error) {
-      console.error("Error fetching destination suggestions:", error);
-      setDestinationSuggestions([]); // Handle error case
+      setDestinationSuggestions(response.data);
+    } catch {
+      // handle error
     }
   };
 
@@ -146,23 +96,30 @@ const Home = () => {
     e.preventDefault();
   };
 
-  useGSAP(() => {
-    if (panelOpen) {
-      gsap.to(panelRef.current, {
-        height: "70%",
-        padding: 24,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    } else {
-      gsap.to(panelRef.current, {
-        height: "0%",
-        padding: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    }
-  }, [panelOpen]);
+  useGSAP(
+    function () {
+      if (panelOpen) {
+        gsap.to(panelRef.current, {
+          height: "70%",
+          padding: 24,
+          // opacity:1
+        });
+        gsap.to(panelCloseRef.current, {
+          opacity: 1,
+        });
+      } else {
+        gsap.to(panelRef.current, {
+          height: "0%",
+          padding: 0,
+          // opacity:0
+        });
+        gsap.to(panelCloseRef.current, {
+          opacity: 0,
+        });
+      }
+    },
+    [panelOpen]
+  );
 
   useGSAP(
     function () {
@@ -223,6 +180,7 @@ const Home = () => {
     },
     [waitingForDriver]
   );
+
   async function findTrip() {
     setVehiclePanel(true);
     setPanelOpen(false);
@@ -259,16 +217,14 @@ const Home = () => {
   return (
     <div className="h-screen relative overflow-hidden">
       <img
-        className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md absolute left-5 top-5"
-        src={EasyGoLogo}
-        alt="EasyGo Logo"
+        className="w-16 absolute left-5 top-5"
+        src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png"
+        alt=""
       />
-      {showMap && (
-        <div className="h-screen w-screen">
-          {/* image for temporary use  */}
-          <LiveTracking />
-        </div>
-      )}
+      <div className="h-screen w-screen">
+        {/* image for temporary use  */}
+        <LiveTracking />
+      </div>
       <div className=" flex flex-col justify-end h-screen absolute top-0 w-full">
         <div className="h-[30%] p-6 bg-white relative">
           <h5
@@ -291,7 +247,6 @@ const Home = () => {
             <input
               onClick={() => {
                 setPanelOpen(true);
-                setShowMap(false);
                 setActiveField("pickup");
               }}
               value={pickup}
@@ -303,7 +258,6 @@ const Home = () => {
             <input
               onClick={() => {
                 setPanelOpen(true);
-                setShowMap(false);
                 setActiveField("destination");
               }}
               value={destination}

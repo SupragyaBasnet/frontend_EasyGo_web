@@ -1,5 +1,4 @@
 import React from "react";
-import "remixicon/fonts/remixicon.css";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
@@ -19,13 +18,14 @@ const VehiclePanel = (props) => {
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
+          props.selectVehicle("car");
         }}
         className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
       >
         <img className="h-12" src={WhiteCar} alt="White Car" />
         <div className="ml-2 w-[80%]">
-          <h4 className="font-medium text-lg">
-            EasyGo{" "}
+          <h4 className="font-medium text-base">
+            EasyGo
             <span>
               <i className="ri-user-3-fill"></i>4
             </span>
@@ -35,18 +35,19 @@ const VehiclePanel = (props) => {
             Affordable, compact rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs 150.50</h2>
+        <h2 className="text-lg font-semibold">Rs.{props.fare.car}</h2>
       </div>
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
+          props.selectVehicle("moto");
         }}
         className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
       >
         <img className="h-12" src={Moto} alt="Moto Car" />
         <div className="ml-2 w-[80%]">
-          <h4 className="font-medium text-lg">
-            Moto{" "}
+          <h4 className="font-medium text-base">
+            Moto
             <span>
               <i className="ri-user-3-fill"></i>1
             </span>
@@ -56,18 +57,19 @@ const VehiclePanel = (props) => {
             Affordable, motorcycle rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs 90.33</h2>
+        <h2 className="text-lg font-semibold">Rs.{props.fare.moto}</h2>
       </div>
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
+          props.selectVehicle("auto");
         }}
         className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
       >
         <img className="h-12" src={Auto} alt="Autorikshaw" />
         <div className=" ml-2 w-[80%]">
           <h4 className="font-medium text-lg">
-            UberAuto{" "}
+            UberAuto
             <span>
               <i className="ri-user-3-fill"></i>4
             </span>
@@ -77,7 +79,7 @@ const VehiclePanel = (props) => {
             Affordable Auto rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs 70.50</h2>
+        <h2 className="text-lg font-semibold">Rs.{props.fare.auto}</h2>
       </div>
     </div>
   );

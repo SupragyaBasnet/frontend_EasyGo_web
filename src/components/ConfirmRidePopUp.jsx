@@ -1,13 +1,32 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Supragya from "../assets/supragya.jpeg";
 
 const ConfirmRidePopUp = (props) => {
   const [otp, setOpt] = useState("");
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+  const submitHandler = async (e) => {
     e.preventDefault();
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/rides/start-ride`,
+      {
+        params: {
+          rideId: props.ride._id,
+          otp: otp,
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      props.setConfirmRidePopupPanel(false);
+      props.setRidePopupPanel(false);
+      navigate("/captain-riding", { state: { ride: props.ride } });
+    }
   };
   return (
     <div>
@@ -29,7 +48,9 @@ const ConfirmRidePopUp = (props) => {
             src={Supragya}
             alt="Supragya image"
           />
-          <h2 className="text-lg font-medium">Supragya Basnet</h2>
+          <h2 className="text-lg font-medium capitalize">
+            {props.ride?.user.fullname.firstname}
+          </h2>
         </div>
         <h5 className="text-lg font-semibold">2.2 KM</h5>
       </div>
@@ -40,8 +61,8 @@ const ConfirmRidePopUp = (props) => {
             <i className=" text-lg ri-map-pin-fill"></i>
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
-              <p className="text-small -mt-1 text-gray-600">
-                Taudaha,kritipur,Nepal
+              <p className="text-sm -mt-1 text-gray-600">
+                {props.ride?.pickup}
               </p>
             </div>
           </div>
@@ -49,15 +70,15 @@ const ConfirmRidePopUp = (props) => {
             <i className="ri-map-pin-user-fill"></i>
             <div>
               <h3 className="text-lg font-medium">562/11-A</h3>
-              <p className="text-small -mt-1 text-gray-600">
-                Taudaha,kritipur,Nepal
+              <p className="text-sm -mt-1 text-gray-600">
+                {props.ride?.destination}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-3 ">
             <i className="ri-currency-line"></i>
             <div>
-              <h3 className="text-lg font-medium">Rs. 200.80</h3>
+              <h3 className="text-lg font-medium">Rs.{props.ride?.fare} </h3>
               <p className="text-small -mt-1 text-gray-600">Cash Cash</p>
             </div>
           </div>
