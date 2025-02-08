@@ -3,83 +3,99 @@ import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
-const VehiclePanel = (props) => {
+const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {
   return (
-    <div>
-      <h5
-        className="p-1 text-center w-[93%] absolute top-0"
-        onClick={() => {
-          props.setVehiclePanel(false);
-        }}
+    <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
+      {/* Close Button */}
+      <button
+        className="absolute top-4 right-4 text-gray-600 text-3xl"
+        onClick={() => setVehiclePanel(false)}
       >
-        <i className=" text-3xl text-gray-600 ri-arrow-down-wide-line"></i>
-      </h5>
-      <h3 className="text-2xl font-semibold mb-5">Choose a Vehicle</h3>
+        &times;
+      </button>
+
+      {/* Panel Header */}
+      <h3 className="text-2xl sm:text-3xl font-semibold text-center mt-10 mb-6">
+        Choose a Vehicle
+      </h3>
+
+      {/* Vehicle Options */}
       <div
         onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("car");
+          setVehiclePanel(false); // Close current panel
+          setConfirmRidePanel(true); // Open ConfirmRide panel
+          selectVehicle("car"); // Set selected vehicle type
         }}
-        className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
+        className="flex flex-col sm:flex-row items-center border-2 hover:border-black mb-4 rounded-xl w-full p-4 cursor-pointer transition"
       >
-        <img className="h-12" src={WhiteCar} alt="White Car" />
-        <div className="ml-2 w-[80%]">
-          <h4 className="font-medium text-base">
+        <img className="h-14 sm:h-20" src={WhiteCar} alt="White Car" />
+        <div className="ml-3 flex-grow text-center sm:text-left">
+          <h4 className="font-medium text-base sm:text-lg">
             EasyGo
-            <span>
-              <i className="ri-user-3-fill"></i>4
+            <span className="ml-2 text-gray-500">
+              <i className="ri-user-3-fill"></i> 4
             </span>
           </h4>
-          <h5 className="font-medium text-sm">2 mins away</h5>
-          <p className="font-normal text-xs text-gray-600">
+          <h5 className="font-medium text-sm text-gray-600">2 mins away</h5>
+          <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, compact rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.{props.fare.car}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold">
+          Rs.{fare?.car ?? "Calculating..."}
+        </h2>
       </div>
+
       <div
         onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("moto");
+          setVehiclePanel(false);
+          setConfirmRidePanel(true);
+          selectVehicle("moto");
         }}
-        className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
+        className="flex flex-col sm:flex-row items-center border-2 hover:border-black mb-4 rounded-xl w-full p-4 cursor-pointer transition"
       >
-        <img className="h-12" src={Moto} alt="Moto Car" />
-        <div className="ml-2 w-[80%]">
-          <h4 className="font-medium text-base">
+        <img className="h-14 sm:h-20" src={Moto} alt="Motorbike" />
+        <div className="ml-3 flex-grow text-center sm:text-left">
+          <h4 className="font-medium text-base sm:text-lg">
             Moto
-            <span>
-              <i className="ri-user-3-fill"></i>1
+            <span className="ml-2 text-gray-500">
+              <i className="ri-user-3-fill"></i> 1
             </span>
           </h4>
-          <h5 className="font-medium text-sm">3 mins away</h5>
-          <p className="font-normal text-xs text-gray-600">
+          <h5 className="font-medium text-sm text-gray-600">3 mins away</h5>
+          <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, motorcycle rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.{props.fare.moto}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold">
+          Rs.{fare?.moto ?? "Calculating..."}
+        </h2>
       </div>
+
       <div
         onClick={() => {
-          props.setConfirmRidePanel(true);
-          props.selectVehicle("auto");
+          setVehiclePanel(false);
+          setConfirmRidePanel(true);
+          selectVehicle("auto");
         }}
-        className="flex border-2 active:border-black  mb-2 rounded-xl w-full p-3 items-center justify-between"
+        className="flex flex-col sm:flex-row items-center border-2 hover:border-black mb-4 rounded-xl w-full p-4 cursor-pointer transition"
       >
-        <img className="h-12" src={Auto} alt="Autorikshaw" />
-        <div className=" ml-2 w-[80%]">
-          <h4 className="font-medium text-lg">
+        <img className="h-14 sm:h-20" src={Auto} alt="Auto Rickshaw" />
+        <div className="ml-3 flex-grow text-center sm:text-left">
+          <h4 className="font-medium text-base sm:text-lg">
             UberAuto
-            <span>
-              <i className="ri-user-3-fill"></i>4
+            <span className="ml-2 text-gray-500">
+              <i className="ri-user-3-fill"></i> 4
             </span>
           </h4>
-          <h5 className="font-medium text-sm">4 mins away</h5>
-          <p className="font-normal text-xs text-gray-600">
+          <h5 className="font-medium text-sm text-gray-600">4 mins away</h5>
+          <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable Auto rides
           </p>
         </div>
-        <h2 className="text-lg font-semibold">Rs.{props.fare.auto}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold">
+          Rs.{fare?.auto ?? "Calculating..."}
+        </h2>
       </div>
     </div>
   );

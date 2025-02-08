@@ -5,14 +5,13 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "remixicon/fonts/remixicon.css";
 import ConfirmRide from "../components/ConfirmRide";
+import LiveTracking from "../components/LiveTracking";
 import LocationSearchPanel from "../components/LocationSearchPanel";
 import LookingForDriver from "../components/LookingForDriver";
 import VehiclePanel from "../components/VehiclePanel";
 import WaitingForDriver from "../components/WaitingForDriver";
 import { SocketContext } from "../context/SocketContext";
 import { UserDataContext } from "../context/UserContext";
-import LiveTracking from "../components/LiveTracking";
-import EasyGoLogo from "../assets/EasyGo.png";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -36,6 +35,7 @@ const Home = () => {
   const [vehicleType, setVehicleType] = useState(null);
   const [showMap, setShowMap] = useState(true);
   const [ride, setRide] = useState(null);
+  const debounceTimeout = useRef(null);
 
   const navigate = useNavigate();
 
@@ -97,7 +97,18 @@ const Home = () => {
     setWaitingForDriver(false);
     navigate("/riding", { state: { ride } }); // Updated navigate to include ride data
   });
+  const handlePanelState = () => {
+    if (vehiclePanel || confirmRidePanel || vehicleFound || waitingForDriver) {
+      setShowMap(false); // Hide map when a panel is open
+    } else {
+      setShowMap(true); // Show map when all panels are closed
+    }
+  };
 
+  useEffect(() => {
+    handlePanelState(); // Correct function name
+  }, [vehiclePanel, confirmRidePanel, vehicleFound, waitingForDriver]);
+  
   const handlePickupChange = async (e) => {
     setPickup(e.target.value);
     try {
@@ -117,30 +128,69 @@ const Home = () => {
   };
 
   const handleDestinationChange = async (e) => {
-    setDestination(e.target.value);
+    const input = e.target.value;
+    setDestination(input); // Update state immediately
+  
+    if (input.length < 3) {
+      setDestinationSuggestions([]); // Clear if too short
+      return;
+    }
+  
+    // Prevent multiple rapid API requests
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+  
+    debounceTimeout.current = setTimeout(async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+          {
+            params: { input },
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        );
+  
+        // Ensure valid array response
+        if (Array.isArray(response.data)) {
+          setDestinationSuggestions(response.data);
+        } else {
+          console.error("Unexpected API response:", response.data);
+          setDestinationSuggestions([]);
+        }
+      } catch (error) {
+        console.error("Error fetching destination suggestions:", error);
+        setDestinationSuggestions([]);
+      }
+    }, 500); // API request will be made **after 500ms**
+  };
+
+  async function findTrip() {
+    setVehiclePanel(true);
+    setPanelOpen(false);
+
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+        `${import.meta.env.VITE_BASE_URL}/rides/get-fare`,
         {
-          params: { input: e.target.value },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          params: { pickup, destination },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       );
 
-      // Ensure response.data is an array
-      if (Array.isArray(response.data)) {
-        setDestinationSuggestions(response.data);
+      console.log("💵 Fare Response:", response.data);
+
+      if (response.data && typeof response.data === "object") {
+        setFare(response.data);
       } else {
-        console.error("Unexpected API response:", response.data);
-        setDestinationSuggestions([]); // Fallback to empty array
+        console.error(" Unexpected fare response:", response.data);
+        setFare({ auto: 0, car: 0, moto: 0 });
       }
     } catch (error) {
-      console.error("Error fetching destination suggestions:", error);
-      setDestinationSuggestions([]); // Handle error case
+      console.error("Error fetching fare:", error);
+      setFare({ auto: 0, car: 0, moto: 0 });
     }
-  };
+  }
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -257,20 +307,16 @@ const Home = () => {
   }
 
   return (
-    <div className="h-screen relative overflow-hidden">
-      <img
-        className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md absolute left-5 top-5"
-        src={EasyGoLogo}
-        alt="EasyGo Logo"
-      />
+    <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">
+
       {showMap && (
-        <div className="h-screen w-screen">
+        <div className="h-screen w-screen overflow-hidden">
           {/* image for temporary use  */}
           <LiveTracking />
         </div>
       )}
       <div className=" flex flex-col justify-end h-screen absolute top-0 w-full">
-        <div className="h-[30%] p-6 bg-white relative">
+        <div className="h-[30%] p-6 bg-white relative flex flex-col ">
           <h5
             ref={panelCloseRef}
             onClick={() => {
@@ -296,7 +342,7 @@ const Home = () => {
               }}
               value={pickup}
               onChange={handlePickupChange}
-              className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full"
+              className="bg-[#eee] px-8 py-2 text-lg rounded-lg w-full"
               type="text"
               placeholder="Add a pick-up location"
             />
@@ -308,82 +354,86 @@ const Home = () => {
               }}
               value={destination}
               onChange={handleDestinationChange}
-              className="bg-[#eee] px-12 py-2 text-lg rounded-lg w-full  mt-3"
+              className="bg-[#eee] px-8 py-2 text-lg rounded-lg w-full  mt-2"
               type="text"
               placeholder="Enter your destination"
             />
           </form>
+
           <button
             onClick={findTrip}
-            className="bg-black text-white px-4 py-2 rounded-lg mt-3 w-full"
+            className="bg-black text-white px-4 py-2 rounded-md mt-1 w-full"
           >
             Find Trip
           </button>
         </div>
-        <div ref={panelRef} className="bg-white h-0">
-          <LocationSearchPanel
-            suggestions={
-              activeField === "pickup"
-                ? pickupSuggestions
-                : destinationSuggestions
-            }
-            setPanelOpen={setPanelOpen}
-            setVehiclePanel={setVehiclePanel}
-            setPickup={setPickup}
-            setDestination={setDestination}
-            activeField={activeField}
-          />
-        </div>
+        <h5
+  ref={panelCloseRef}
+  onClick={() => {
+    setPanelOpen(false);
+    setShowMap(false); // Ensure map shows again when closing the panel
+  }}
+  className="absolute left-1/2 transform -translate-x-1/2 top-4 text-2xl cursor-pointer transition-all duration-300 ease-in-out"
+>
+
+</h5>
+
+
+{panelOpen && (
+  <div ref={panelRef} className="bg-white h-auto transition-transform duration-300">
+    <LocationSearchPanel
+      suggestions={
+        activeField === "pickup"
+          ? pickupSuggestions
+          : destinationSuggestions
+      }
+      setPanelOpen={setPanelOpen}
+      setVehiclePanel={setVehiclePanel}
+      setPickup={setPickup}
+      setDestination={setDestination}
+      activeField={activeField}
+    />
+  </div>
+)}
       </div>
-      <div
-        ref={vehiclePanelRef}
-        className="fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-10 pt-12"
-      >
+      {vehiclePanel && (
         <VehiclePanel
           selectVehicle={setVehicleType}
           fare={fare}
           setConfirmRidePanel={setConfirmRidePanel}
           setVehiclePanel={setVehiclePanel}
         />
-      </div>
-      <div
-        ref={confirmRidePanelRef}
-        className="fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
-      >
-        <ConfirmRide
-          createRide={createRide}
-          pickup={pickup}
-          destination={destination}
-          fare={fare}
-          vehicleType={vehicleType}
-          setConfirmRidePanel={setConfirmRidePanel}
-          setVehicleFound={setVehicleFound}
-        />
-      </div>
-      <div
-        ref={vehicleFoundRef}
-        className="fixed w-full z-10 bottom-0 translate-y-full bg-white px-3 py-6 pt-12"
-      >
+      )}
+      {confirmRidePanel && (
+  <ConfirmRide
+    vehicleType={vehicleType}
+    pickup={pickup}
+    destination={destination}
+    fare={fare}
+    setConfirmRidePanel={setConfirmRidePanel} // Close ConfirmRide
+    setVehiclePanel={setVehiclePanel} // Navigate back to Choose a Vehicle screen
+    setVehicleFound={setVehicleFound} // Open "Looking for Driver" screen
+    createRide={createRide} // Trigger ride creation
+  />
+)}
+
+      {vehicleFound && (
         <LookingForDriver
-          createRide={createRide}
+          createRide={() => {}}
           pickup={pickup}
           destination={destination}
           fare={fare}
           vehicleType={vehicleType}
           setVehicleFound={setVehicleFound}
         />
-      </div>
-      <div
-        ref={waitingForDriverRef}
-        className="fixed w-full  z-10 bottom-0  bg-white px-3 py-6 pt-12"
-      >
+      )}
+      {waitingForDriver && (
         <WaitingForDriver
           ride={ride}
           setVehicleFound={setVehicleFound}
           setWaitingForDriver={setWaitingForDriver}
-          waitingForDriver={waitingForDriver}
         />
-      </div>
+      )}
     </div>
   );
 };
