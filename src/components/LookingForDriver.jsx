@@ -1,9 +1,38 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
 const LookingForDriver = ({ vehicleType, pickup, destination, fare, setVehicleFound }) => {
+  const navigate = useNavigate();
+  const [driverFound, setDriverFound] = useState(false);
+
+  // Simulate finding a driver after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDriverFound(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Handle navigation to the riding page when a driver is found
+  useEffect(() => {
+    if (driverFound) {
+      navigate("/riding", {
+        state: {
+          ride: {
+            vehicleType,
+            pickup,
+            destination,
+            fare: fare?.[vehicleType] ?? "Calculating...",
+          },
+        },
+      });
+    }
+  }, [driverFound, navigate, vehicleType, pickup, destination, fare]);
+
   // Function to dynamically set the vehicle image
   const getVehicleImage = () => {
     if (vehicleType === "auto") return Auto;

@@ -1,9 +1,35 @@
-import React from "react";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
 const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {
+  const [vehicleAvailability, setVehicleAvailability] = useState({
+    car: { time: "Calculating...", riders: "..." },
+    moto: { time: "Calculating...", riders: "..." },
+    auto: { time: "Calculating...", riders: "..." },
+  });
+
+  useEffect(() => {
+    // Fetch vehicle availability data
+    const fetchVehicleAvailability = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+
+        if (response.status === 200) {
+          setVehicleAvailability(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching vehicle availability:", error);
+      }
+    };
+
+    fetchVehicleAvailability();
+  }, []);
+
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
       {/* Close Button */}
@@ -22,9 +48,9 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
       {/* Vehicle Options */}
       <div
         onClick={() => {
-          setVehiclePanel(false); // Close current panel
-          setConfirmRidePanel(true); // Open ConfirmRide panel
-          selectVehicle("car"); // Set selected vehicle type
+          setVehiclePanel(false);
+          setConfirmRidePanel(true);
+          selectVehicle("car");
         }}
         className="flex flex-col sm:flex-row items-center border-2 hover:border-black mb-4 rounded-xl w-full p-4 cursor-pointer transition"
       >
@@ -33,10 +59,12 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             EasyGo
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> 4
+              <i className="ri-user-3-fill"></i> {vehicleAvailability.car.riders || "N/A"}
             </span>
           </h4>
-          <h5 className="font-medium text-sm text-gray-600">2 mins away</h5>
+          <h5 className="font-medium text-sm text-gray-600">
+            {vehicleAvailability.car.time || "N/A"} away
+          </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, compact rides
           </p>
@@ -59,10 +87,12 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             Moto
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> 1
+              <i className="ri-user-3-fill"></i> {vehicleAvailability.moto.riders || "N/A"}
             </span>
           </h4>
-          <h5 className="font-medium text-sm text-gray-600">3 mins away</h5>
+          <h5 className="font-medium text-sm text-gray-600">
+            {vehicleAvailability.moto.time || "N/A"} away
+          </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, motorcycle rides
           </p>
@@ -85,10 +115,12 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             UberAuto
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> 4
+              <i className="ri-user-3-fill"></i> {vehicleAvailability.auto.riders || "N/A"}
             </span>
           </h4>
-          <h5 className="font-medium text-sm text-gray-600">4 mins away</h5>
+          <h5 className="font-medium text-sm text-gray-600">
+            {vehicleAvailability.auto.time || "N/A"} away
+          </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable Auto rides
           </p>

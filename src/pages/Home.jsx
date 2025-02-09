@@ -86,17 +86,23 @@ const Home = () => {
     );
   };
 
-  socket.on("ride-confirmed", (ride) => {
-    setVehicleFound(false);
-    setWaitingForDriver(true);
-    setRide(ride);
-  });
-
-  socket.on("ride-started", (ride) => {
-    console.log("ride");
-    setWaitingForDriver(false);
-    navigate("/riding", { state: { ride } }); // Updated navigate to include ride data
-  });
+  useEffect(() => {
+    socket.on("ride-confirmed", (ride) => {
+      setVehicleFound(false);
+      setWaitingForDriver(true); // Show "Waiting for Driver" screen
+      setRide(ride);
+    });
+  
+    socket.on("ride-started", (ride) => {
+      setWaitingForDriver(false);
+      navigate("/riding", { state: { ride } }); // Navigate to live tracking
+    });
+  
+    socket.on("ride-ended", () => {
+      navigate("/home"); // Navigate back to the home screen
+    });
+  }, []);
+  
   const handlePanelState = () => {
     if (vehiclePanel || confirmRidePanel || vehicleFound || waitingForDriver) {
       setShowMap(false); // Hide map when a panel is open
@@ -291,31 +297,44 @@ const Home = () => {
   }
 
   async function createRide() {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/rides/create`,
-      {
-        pickup,
-        destination,
-        vehicleType,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/rides/create`,
+        {
+          pickup,
+          destination,
+          vehicleType,
         },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+  
+      if (response.data) {
+        setRide(response.data); // Store ride details
+        setVehicleFound(true); // Show "Looking for Driver" screen
+  
+        // Emit ride request to captains
+        socket.emit("new-ride", response.data);
       }
-    );
+    } catch (error) {
+      console.error("Error creating ride:", error);
+    }
   }
+  
 
   return (
     <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">
 
       {showMap && (
-        <div className="h-screen w-screen overflow-hidden">
+        <div className="h-[65%] w-full overflow-hidden relative">
           {/* image for temporary use  */}
           <LiveTracking />
         </div>
       )}
-      <div className=" flex flex-col justify-end h-screen absolute top-0 w-full">
+      <div className=" flex flex-col justify-end h-screen absolute p-4 top-0 bottom-0 w-full pb-14">
         <div className="h-[30%] p-6 bg-white relative flex flex-col ">
           <h5
             ref={panelCloseRef}

@@ -1,7 +1,13 @@
 import React from "react";
-import Supragya from "../assets/supragya.jpeg";
+
 
 const RidePopUp = (props) => {
+  const ride = props.ride;
+  const userImage = ride?.user?.profileImage || "https://via.placeholder.com/150";
+  const userName = `${ride?.user?.fullname?.firstname || "Unknown"} ${ride?.user?.fullname?.lastname || ""}`;
+  const distance = ride?.distance || "Calculating...";
+  const duration = ride?.duration || "Calculating...";
+  const fare = ride?.fare || 0;
   return (
     <div>
       <h5
@@ -16,17 +22,15 @@ const RidePopUp = (props) => {
       <div className="flex items-center justify-between p-3 bg-yellow-500 rounded-lg mt-4 ">
         <div className="flex items-center gap-3 ">
           <img
-            className="h-12 w-12 rounded-full object-cover"
-            src={Supragya}
-            alt="Supragya image"
+            cclassName="h-12 w-12 rounded-full object-cover"
+            src={userImage}
+            alt="User"
           />
           <h2 className="text-lg font-medium">
-            {props.ride?.user.fullname.firstname +
-              " " +
-              props.ride?.user.fullname.lastname}
+          {userName}
           </h2>
         </div>
-        <h5 className="text-lg font-semibold">2.2 KM</h5>
+        <h5 className="text-lg font-semibold">{distance}</h5>
       </div>
 
       <div className="flex gap-2 justify-between flex-col items-center">
@@ -34,26 +38,33 @@ const RidePopUp = (props) => {
           <div className="flex items-center gap-5 p-3 border-b-2">
             <i className=" text-lg ri-map-pin-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">562/11-A</h3>
+              <h3 className="text-lg font-medium">Pickup</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                {props.ride?.pickup}
+              {ride?.pickup || "Unknown"}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-3 border-b-2">
             <i className="ri-map-pin-user-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">562/11-A</h3>
+              <h3 className="text-lg font-medium">Destination</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                {props.ride?.destination}
+              {ride?.destination || "Unknown"}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-5 p-3 ">
+          <div className="flex items-center gap-5 p-3 border-b-2">
             <i className="ri-currency-line"></i>
             <div>
-              <h3 className="text-lg font-medium">Rs.{props.ride?.fare} </h3>
-              <p className="text-small -mt-1 text-gray-600">Cash Cash</p>
+            <h3 className="text-lg font-medium">Fare</h3>
+              <p className="text-sm -mt-1 text-gray-600">Rs.{fare}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-5 p-3">
+            <i className="ri-timer-line"></i>
+            <div>
+            <h3 className="text-lg font-medium">Duration</h3>
+              <p className="text-sm -mt-1 text-gray-600">{duration}</p>
             </div>
           </div>
         </div>

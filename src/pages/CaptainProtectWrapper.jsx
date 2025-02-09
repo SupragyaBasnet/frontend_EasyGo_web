@@ -14,21 +14,22 @@ const CaptainProtectWrapper = ({ children }) => {
       navigate("/captain-login");
       return;
     }
-
+  
     axios
       .get(`${import.meta.env.VITE_BASE_URL}/captains/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
-        setCaptain(response.data.captain); // Update context
+        setCaptain(response.data.captain);
         setIsLoading(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("Error fetching captain profile:", err.response || err.message);
         localStorage.removeItem("token");
         navigate("/captain-login");
       });
   }, [token]);
-
+  
   if (isLoading) return <div>Loading...</div>;
 
   return <>{children}</>;

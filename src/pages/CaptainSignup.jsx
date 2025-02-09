@@ -12,7 +12,7 @@ const CaptainSignup = () => {
   const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehicleName, setVehicleName] = useState("");
   const [vehiclePlate, setVehiclePlate] = useState("");
   const [vehicleCapacity, setVehicleCapacity] = useState("");
   const [vehicleType, setVehicleType] = useState("");
@@ -42,7 +42,7 @@ const CaptainSignup = () => {
       email,
       password,
       vehicle: {
-        color: vehicleColor,
+        name: vehicleName,
         plate: vehiclePlate,
         capacity: vehicleCapacity,
         vehicleType: vehicleType,
@@ -157,13 +157,13 @@ const CaptainSignup = () => {
         <h4 className="font-semibold text-gray-700 mb-3">Vehicle Information</h4>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Vehicle Color</label>
+            <label className="block text-gray-700 font-medium mb-2">Vehicle Name</label>
             <input
               required
               type="text"
-              placeholder="Enter vehicle color"
-              value={vehicleColor}
-              onChange={(e) => setVehicleColor(e.target.value)}
+              placeholder="Enter vehicle name"
+              value={vehicleName}
+              onChange={(e) => setVehicleName(e.target.value)}
               className="border border-gray-400 p-3 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
