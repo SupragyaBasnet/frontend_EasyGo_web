@@ -1,22 +1,24 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import Affordable from "./pages/Affordable";
 import CaptainHome from "./pages/CaptainHome";
 import CaptainLogin from "./pages/CaptainLogin";
 import CaptainLogout from "./pages/CaptainLogout";
 import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
+import CaptainRiding from "./pages/CaptainRiding";
+import CaptainSettings from "./pages/CaptainSettings";
 import CaptainSignup from "./pages/CaptainSignup";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import Riding from "./pages/Riding";
+import Safety from "./pages/Safety";
+import Settings from "./pages/settings";
 import Start from "./pages/Start";
+import Tracking from "./pages/Tracking";
 import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
-import Affordable from "./pages/Affordable";
-import Safety from "./pages/Safety";
-import Tracking from "./pages/Tracking";
-import CaptainRiding from "./pages/CaptainRiding";
 
 const App = () => {
   return (
@@ -31,6 +33,11 @@ const App = () => {
       <Route path="/login" element={<UserLogin />} />
       <Route path="/signup" element={<UserSignup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/settings" element={<Settings />} />
+
+
+<Route path="/captain-settings" element={<CaptainSettings />} />
+
       <Route
         path="/home"
         element={

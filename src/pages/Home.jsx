@@ -36,6 +36,7 @@ const Home = () => {
   const [showMap, setShowMap] = useState(true);
   const [ride, setRide] = useState(null);
   const debounceTimeout = useRef(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -323,17 +324,34 @@ const Home = () => {
       console.error("Error creating ride:", error);
     }
   }
-  
+  const toggleSettings = () => {
+    setSettingsOpen((prev) => !prev);
+  };
 
   return (
-    <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">
+    <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col relative">
+    {/* Settings Icon */}
+    <div
+      className="absolute z-[1000] flex flex-col items-center gap-2"
+      style={{ top: "3%", right: "10px" }}
+    >
+      <button
+        onClick={() => navigate("/settings")} // Navigate to Settings
+        className="bg-gray-600 text-white px-2 py-1 rounded-full shadow-md hover:bg-gray-700"
+        style={{ zIndex: 1000 }}
+      >
+        <i className="ri-settings-3-line text-xl"></i>
+      </button>
+    </div>
 
-      {showMap && (
-        <div className="h-[65%] w-full overflow-hidden relative">
-          {/* image for temporary use  */}
-          <LiveTracking />
-        </div>
-      )}
+    {showMap && (
+  <div className="h-[65%] w-full overflow-hidden relative">
+    {/* The LiveTracking component will render only when showMap is true */}
+    <LiveTracking />
+  </div>
+)}
+
+
       <div className=" flex flex-col justify-end h-screen absolute p-4 top-0 bottom-0 w-full pb-14">
         <div className="h-[30%] p-6 bg-white relative flex flex-col ">
           <h5

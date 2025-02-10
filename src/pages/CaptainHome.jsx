@@ -9,6 +9,8 @@ import LiveTracking from "../components/LiveTracking"; //
 import RidePopUp from "../components/RidePopUp";
 import { CaptainDataContext } from "../context/CaptainContext";
 import { SocketContext } from "../context/SocketContext";
+import { useNavigate } from "react-router-dom"; // Added this line
+
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -21,6 +23,9 @@ const CaptainHome = () => {
 
   const { socket } = useContext(SocketContext);
   const { captain, isLoading, error } = useContext(CaptainDataContext);
+  const navigate = useNavigate(); // Added this line
+
+
 
   useEffect(() => {
     if (captain) {
@@ -121,12 +126,23 @@ const CaptainHome = () => {
     },
     [confirmRidePopupPanel]
   );
-  
 
   return (
     <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">
-      {/* Header Section */}
-      {/* Map Section */}
+      {/* Settings Icon */}
+    <div
+      className="absolute z-[1000] flex flex-col items-center gap-2"
+      style={{ top: "3%", right: "10px" }}
+    >
+      <button
+  onClick={() => navigate("/captain-settings")} // Updated this line to use navigate
+  className="bg-gray-600 text-white px-2 py-1 rounded-full shadow-md hover:bg-gray-700"
+  style={{ zIndex: 1000 }}
+>
+  <i className="ri-settings-3-line text-xl"></i>
+</button>
+
+    </div>
       {showMap && (
         <div className="h-[65%] w-full relative overflow-hidden">
           <LiveTracking />
