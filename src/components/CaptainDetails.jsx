@@ -21,12 +21,17 @@ const CaptainDetails = () => {
     <div className="flex flex-col items-center justify-center">
       {/* Profile Section */}
       <div className="flex items-center gap-4 mb-6">
-        <img
-              src={captain?.profilePicture ? `http://localhost:4000${captain.profilePicture}?t=${new Date().getTime()}` : defaultAvatar}
+      <img
+  src={
+    captain?.profilePicture && captain.profilePicture.trim() !== "" 
+      ? `http://localhost:4000${captain.profilePicture}?t=${Date.now()}`
+      : defaultAvatar
+  }
+  onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }} // Handles broken links
+  alt="Captain"
+  className="h-10 w-10 rounded-full object-cover"
+/>
 
-          alt="Captain"
-          className="h-10 w-10 rounded-full object-cover"
-        />
         <div>
           <h3 className="text-lg font-medium capitalize">{`${captain.fullname.firstname} ${captain.fullname.lastname}`}</h3>
           <p className="text-sm text-gray-600">Earnings: Rs.{captain.earnings || 0}</p>

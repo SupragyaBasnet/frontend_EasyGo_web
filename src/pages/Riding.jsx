@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LiveTracking from "../components/LiveTracking";
 import { SocketContext } from "../context/SocketContext";
+import defaultAvatar from "../assets/image.jpeg"; // Update with your default avatar path
 
 const Riding = () => {
   const location = useLocation();
@@ -49,7 +50,17 @@ const Riding = () => {
       <div className="h-1/2 p-4">
         {/* Captain Details */}
         <div className="flex items-center gap-4 border-b-2 pb-4">
-          <img className="h-16 w-16 rounded-full object-cover"  src={captain?.profilePicture ? `http://localhost:4000${captain.profilePicture}` : defaultAvatar} alt="Captain" />
+        <img
+  src={
+    captain?.profilePicture && captain.profilePicture.trim() !== "" 
+      ? `http://localhost:4000${captain.profilePicture}?t=${Date.now()}`
+      : defaultAvatar
+  }
+  onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }} // Handles broken links
+  alt="Captain"
+  className="h-10 w-10 rounded-full object-cover"
+/>
+
           <div className="flex-1">
             <h2 className="text-lg font-semibold">{captainName}</h2>
             <p className="text-sm text-gray-600">Vehicle: {vehicleModel} - {vehiclePlate}</p>
