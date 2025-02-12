@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { CaptainDataContext } from "../context/CaptainContext";
+import defaultAvatar from "../assets/image.jpeg"; // Update with your default avatar path
 
 const CaptainDetails = () => {
   const { captain, isLoading, error } = useContext(CaptainDataContext);
@@ -21,7 +22,8 @@ const CaptainDetails = () => {
       {/* Profile Section */}
       <div className="flex items-center gap-4 mb-6">
         <img
-          src="https://via.placeholder.com/50"
+              src={captain?.profilePicture ? `http://localhost:4000${captain.profilePicture}?t=${new Date().getTime()}` : defaultAvatar}
+
           alt="Captain"
           className="h-10 w-10 rounded-full object-cover"
         />

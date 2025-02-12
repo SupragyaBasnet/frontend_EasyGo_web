@@ -49,7 +49,7 @@ const Riding = () => {
       <div className="h-1/2 p-4">
         {/* Captain Details */}
         <div className="flex items-center gap-4 border-b-2 pb-4">
-          <img className="h-16 w-16 rounded-full object-cover" src={captainImage} alt="Captain" />
+          <img className="h-16 w-16 rounded-full object-cover"  src={captain?.profilePicture ? `http://localhost:4000${captain.profilePicture}` : defaultAvatar} alt="Captain" />
           <div className="flex-1">
             <h2 className="text-lg font-semibold">{captainName}</h2>
             <p className="text-sm text-gray-600">Vehicle: {vehicleModel} - {vehiclePlate}</p>

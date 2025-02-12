@@ -14,7 +14,7 @@ const Settings = () => {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [cameraStream, setCameraStream] = useState(null);
-  const [language, setLanguage] = useState("en");
+
   const [nightMode, setNightMode] = useState(false);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Settings = () => {
   
       setUser(res.data);
       console.log(res.data.profilePicture); // Verify server response
-      setLanguage(res.data.language || "en");
+
       setNightMode(res.data.nightMode || false);
   
       // Apply the theme
@@ -224,19 +224,7 @@ const Settings = () => {
 
       {/* Settings Options */}
       <div className="flex flex-col mt-4 px-1 space-y-4">
-        {/* Language */}
-        <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg">
-          <i className="ri-global-line text-xl"></i>
-          <span className="text-lg">Language</span>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="ml-auto px-2 py-1 border rounded"
-          >
-            <option value="en">English</option>
-            <option value="ne">Nepali</option>
-          </select>
-        </div>
+      
 
      {/* Night Mode */}
      <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg">
