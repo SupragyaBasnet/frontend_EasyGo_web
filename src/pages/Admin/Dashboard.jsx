@@ -1,17 +1,30 @@
 import axios from "axios";
 import {
-  BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title,
+  ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement,
+  PointElement,
+  Title,
   Tooltip
 } from "chart.js";
-import { LogOutIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
+
+import { LogOutIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EasyGoLogo from "../../assets/EasyGo.png";
 import Captains from "./Captains"; // ✅ Import Captains Component
 import Passengers from "./Passengers"; // ✅ Import Passengers Component
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement, // ✅ Ensure ArcElement is registered
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -28,36 +41,38 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/admin/dashboard", { withCredentials: true });
-        setStats(response.data);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      }
-    };
-
     const fetchAdmin = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/admin/profile", { withCredentials: true });
-        if (response.data && response.data.username && response.data.email) {
-          setAdmin(response.data);
-        } else {
-          setAdmin({ username: "Unknown", email: "Not Available" });
+        // ✅ Check token in cookies
+        const token = document.cookie
+          .split("; ")
+          .find(row => row.startsWith("token="))
+          ?.split("=")[1];
+  
+        if (!token) {
+          console.error("No admin token found. Please log in again.");
+          return;
         }
+  
+        console.log("Fetching admin profile...");
+        const response = await axios.get("http://localhost:4000/admin/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+  
+        console.log("Admin profile data:", response.data);
+        setAdmin(response.data);
       } catch (error) {
-        console.error("Error fetching admin profile:", error);
-        setAdmin({ username: "Error", email: "Error fetching data" });
+        console.error("Error fetching admin profile:", error.response ? error.response.data : error.message);
       }
     };
-
-    fetchStats();
+  
     fetchAdmin();
   }, []);
-
+  
   const fetchChartData = async (type) => {
     console.log(`Fetching ${type} data...`);
-    
+  
     let endpoint = "";
     switch (type) {
       case "totalRides":
@@ -67,7 +82,7 @@ export default function Dashboard() {
         endpoint = "/admin/total-fare";
         break;
       case "totalDistance":
-        endpoint = "/admin/total-distance";
+        endpoint = "/admin/total-distance"; // ✅ Ensure this is correct!
         break;
       default:
         return;
@@ -77,19 +92,30 @@ export default function Dashboard() {
     setChartData(null);
   
     try {
-      const response = await axios.get(`http://localhost:4000${endpoint}`, { withCredentials: true });
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        console.error("No admin token found. Please log in again.");
+        return;
+      }
+  
+      const response = await axios.get(`http://localhost:4000${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
+  
       console.log(`Fetched ${type} Data:`, response.data);
-      
+  
       if (response.data.length > 0) {
         setChartData(response.data);
       } else {
-        setChartData([]);  // Prevents rendering empty datasets
+        setChartData([]); // Prevents rendering empty datasets
       }
     } catch (error) {
       console.error(`Error fetching ${type} data:`, error);
       setChartData([]);
     }
   };
+  
   
   const handleLogout = async () => {
     try {
@@ -212,30 +238,72 @@ export default function Dashboard() {
   <div className="w-full mt-6 bg-white p-6 rounded-lg shadow">
     <h2 className="text-lg font-semibold mb-4">Statistics Chart</h2>
     {chartData && chartData.length > 0 ? (
-      <div className="w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* ✅ Total Rides Chart */}
         {selectedChart === "totalRides" && (
-          <Line
-            data={{
-              labels: chartData.map((d) => d._id),
-              datasets: [{ label: "Total Rides", data: chartData.map((d) => d.count), borderColor: "blue" }]
-            }}
-          />
+          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
+            <Line
+              data={{
+                labels: chartData.map((d) => d._id || "Unknown Date"), // ✅ Handle missing labels
+                datasets: [
+                  {
+                    label: "Total Rides",
+                    data: chartData.map((d) => d.count || 0), // ✅ Handle missing values
+                    borderColor: "blue",
+                    fill: false,
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false, // ✅ Prevents chart from stretching
+              }}
+            />
+          </div>
         )}
+
+        {/* ✅ Total Fare Chart */}
         {selectedChart === "totalFare" && (
-          <Bar
-            data={{
-              labels: chartData.map((d) => d._id),
-              datasets: [{ label: "Total Fare Earned", data: chartData.map((d) => d.amount), backgroundColor: "green" }]
-            }}
-          />
+          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
+            <Bar
+              data={{
+                labels: chartData.map((d) => d._id || "Unknown Date"), // ✅ Handle missing labels
+                datasets: [
+                  {
+                    label: "Total Fare Earned",
+                    data: chartData.map((d) => d.amount || 0), // ✅ Handle missing values
+                    backgroundColor: "green",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false, // ✅ Prevents chart from stretching
+              }}
+            />
+          </div>
         )}
+
+        {/* ✅ Total Distance Chart (Pie) */}
         {selectedChart === "totalDistance" && (
-          <Pie
-            data={{
-              labels: chartData.map((d) => d._id),
-              datasets: [{ label: "Total Distance Covered", data: chartData.map((d) => d.distance), backgroundColor: ["purple", "orange", "blue"] }]
-            }}
-          />
+          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
+            <Pie
+              data={{
+                labels: chartData.map((d) => d._id || "Unknown Vehicle"), // ✅ Handle missing vehicle types
+                datasets: [
+                  {
+                    label: "Total Distance Covered",
+                    data: chartData.map((d) => d.distance || 0), // ✅ Handle missing distances
+                    backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56"], // ✅ More readable colors
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false, // ✅ Prevents chart from stretching
+              }}
+            />
+          </div>
         )}
       </div>
     ) : (
@@ -247,38 +315,34 @@ export default function Dashboard() {
 )}
 
 
+{activePage === "passengers" && <Passengers />}
+{activePage === "captains" && <Captains />}
 
-        {activePage === "passengers" && <Passengers />}
-        {activePage === "captains" && <Captains />}
+</div>
+
+
+{showLogoutModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+      <h2 className="text-lg font-semibold mb-4">Are you sure you want to logout?</h2>
+      <div className="flex justify-between">
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full mr-2"
+          onClick={handleLogout}
+        >
+          Yes
+        </button>
+        <button
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 w-full"
+          onClick={() => setShowLogoutModal(false)}
+        >
+          No
+        </button>
       </div>
+    </div>
+  </div>
+)}
 
-
-
-
-
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-            <h2 className="text-lg font-semibold mb-4">Are you sure you want to logout?</h2>
-            <div className="flex justify-between">
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full mr-2"
-                onClick={handleLogout}
-              >
-                Yes
-              </button>
-              <button
-                className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 w-full"
-                onClick={() => setShowLogoutModal(false)}
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

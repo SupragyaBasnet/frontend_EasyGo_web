@@ -7,15 +7,29 @@ export default function Captains() {
   useEffect(() => {
     const fetchCaptains = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/admin/captains", { withCredentials: true });
+        const token = localStorage.getItem("adminToken"); // ✅ Get token from localStorage
+    
+        if (!token) {
+          console.error("No admin token found. Please log in again.");
+          return;
+        }
+    
+        console.log("Fetching captains...");
+        const response = await axios.get("http://localhost:4000/admin/all-captains", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+    
+        console.log("Captains data:", response.data);
         setCaptains(response.data);
       } catch (error) {
-        console.error("Error fetching captains data:", error);
+        console.error("Error fetching captains:", error.response ? error.response.data : error.message);
       }
     };
+    
 
-    fetchCaptains();
-  }, []);
+    fetchCaptains(); // ✅ Call the function inside useEffect
+  }, []); // ✅ Ensure useEffect runs only once on component mount
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -27,21 +41,29 @@ export default function Captains() {
             <th className="p-3 border">Phone</th>
             <th className="p-3 border">Email</th>
             <th className="p-3 border">Vehicle</th>
+            <th className="p-3 border">Vehicle Type</th>
+            <th className="p-3 border">Plate</th>
+            <th className="p-3 border">Capacity</th>
           </tr>
         </thead>
         <tbody>
           {captains.length > 0 ? (
             captains.map((captain) => (
               <tr key={captain._id} className="border-b">
-                <td className="p-3 border">{captain.fullname.firstname} {captain.fullname.lastname}</td>
-                <td className="p-3 border">{captain.phonenumber}</td>
-                <td className="p-3 border">{captain.email}</td>
-                <td className="p-3 border">{captain.vehicle.name} - {captain.vehicle.plate}</td>
+                <td className="p-3 border">
+                  {captain?.fullname?.firstname || "Firstname"} {captain?.fullname?.lastname || "Lastname"}
+                </td>
+                <td className="p-3 border">{captain?.phonenumber || "No phone number"}</td>
+                <td className="p-3 border">{captain?.email || "Email not available"}</td>
+                <td className="p-3 border">{captain?.vehicle?.name || "N/A"}</td>
+                <td className="p-3 border">{captain?.vehicle?.vehicleType || "N/A"}</td>
+                <td className="p-3 border">{captain?.vehicle?.plate || "N/A"}</td>
+                <td className="p-3 border">{captain?.vehicle?.capacity || "N/A"}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4" className="text-center p-3 border">No captains found.</td>
+              <td colSpan="7" className="text-center p-3 border">No captains found.</td>
             </tr>
           )}
         </tbody>

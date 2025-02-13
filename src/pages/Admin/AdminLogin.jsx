@@ -21,20 +21,28 @@ export default function AdminLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     if (!email || !password) {
       alert("Please enter your email and password.");
       return;
     }
-
+  
     try {
-      await axios.post("http://localhost:4000/admin/login", { email, username, password }, { withCredentials: true });
+      const response = await axios.post("http://localhost:4000/admin/login", { 
+        email, 
+        username, 
+        password 
+      }, { withCredentials: true });
+  
+      // ✅ Store token in localStorage
+      localStorage.setItem("adminToken", response.data.token);
+  
       navigate("/dashboard"); // Redirect to Dashboard after login
     } catch (error) {
       alert("Invalid credentials");
     }
   };
-
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form className="bg-white p-6 shadow-lg rounded-lg w-96" onSubmit={handleLogin}>
