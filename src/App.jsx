@@ -3,6 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import LookingForDriver from "./components/LookingForDriver";
 import RiderList from "./components/RiderList";
 import AdminLogin from "./pages/Admin/AdminLogin";
+import Captains from "./pages/Admin/Captains";
+import Dashboard from "./pages/Admin/Dashboard";
+import Passengers from "./pages/Admin/Passengers";
 import Affordable from "./pages/Affordable";
 import CaptainHome from "./pages/CaptainHome";
 import CaptainLogin from "./pages/CaptainLogin";
@@ -11,7 +14,6 @@ import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 import CaptainRiding from "./pages/CaptainRiding";
 import CaptainSettings from "./pages/CaptainSettings";
 import CaptainSignup from "./pages/CaptainSignup";
-import Dashboard from "./pages/Admin/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
 import Riding from "./pages/Riding";
@@ -23,9 +25,6 @@ import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
-import TotalRides from "./pages/Admin/TotalRides";
-import TotalFare from "./pages/Admin/TotalFare";
-import TotalDistanceCovered from "./pages/Admin/TotalDistanceCovered";
 
 const App = () => {
   return (
@@ -46,12 +45,13 @@ const App = () => {
 
 <Route path="/captain-settings" element={<CaptainSettings />} />
 <Route path="/lookingforrider" element={<LookingForDriver />} />
+
+{/* //AdminRoutes */}
 <Route path="/admin_login" element={<AdminLogin />} />  {/* 🔹 Added Admin Login Route */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin/passengers" element={<Passengers />} />
+        <Route path="/admin/captains" element={<Captains />} />
 
-        <Route path="/total-rides" element={<TotalRides />} />
-        <Route path="/total-fare" element={<TotalFare />} />
-        <Route path="/total-distance" element={<TotalDistanceCovered />} />
 
 
       <Route
