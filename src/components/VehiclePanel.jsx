@@ -31,7 +31,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-white z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
+    <div className="fixed top-0 left-0 w-full h-full  z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
       {/* Close Button */}
       <button
         className="absolute top-4 right-4 text-gray-600 text-3xl"

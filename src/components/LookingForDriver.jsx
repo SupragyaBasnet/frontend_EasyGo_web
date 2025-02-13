@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
@@ -8,7 +8,6 @@ const LookingForDriver = ({ vehicleType, pickup, destination, fare, setVehicleFo
   const navigate = useNavigate();
   const [driverFound, setDriverFound] = useState(false);
 
-  // Simulate finding a driver after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setDriverFound(true);
@@ -17,10 +16,9 @@ const LookingForDriver = ({ vehicleType, pickup, destination, fare, setVehicleFo
     return () => clearTimeout(timer);
   }, []);
 
-  // Handle navigation to the riding page when a driver is found
   useEffect(() => {
     if (driverFound) {
-      navigate("/riding", {
+      navigate("/ride-list", {
         state: {
           ride: {
             vehicleType,
@@ -33,15 +31,15 @@ const LookingForDriver = ({ vehicleType, pickup, destination, fare, setVehicleFo
     }
   }, [driverFound, navigate, vehicleType, pickup, destination, fare]);
 
-  // Function to dynamically set the vehicle image
   const getVehicleImage = () => {
     if (vehicleType === "auto") return Auto;
     if (vehicleType === "moto") return Moto;
-    return WhiteCar; // Default to car
+    return WhiteCar;
   };
 
+
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-white z-50 px-6 sm:px-10 md:px-16 overflow-y-auto">
+    <div className="fixed top-0 left-0 w-full h-full z-50 px-6 sm:px-10 md:px-16 overflow-y-auto">
       {/* Close Button */}
       <button
         className="absolute top-2 left-1/2 transform -translate-x-1/2 text-gray-600 text-2xl"

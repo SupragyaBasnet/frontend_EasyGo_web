@@ -21,7 +21,7 @@ const ConfirmRide = ({
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-white z-50 px-6 sm:px-10 md:px-16 overflow-y-auto">
+    <div className="fixed top-0 left-0 w-full h-full  z-50 px-6 sm:px-10 md:px-16 overflow-y-auto">
       {/* Dropdown Button */}
       <button
         className="absolute top-2 left-1/2 transform -translate-x-1/2 text-gray-600 text-2xl"

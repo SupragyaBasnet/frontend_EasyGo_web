@@ -21,7 +21,7 @@ const Riding = () => {
   }, [socket, navigate]);
 
   // Extracting captain details
-  const captainImage = ride?.captain?.profileImage || "https://via.placeholder.com/150";
+
   const captainName = `${ride?.captain?.fullname?.firstname || "Unknown"} ${ride?.captain?.fullname?.lastname || ""}`;
   const vehiclePlate = ride?.captain?.vehicle?.plate || "Unknown Plate";
   const vehicleModel = ride?.captain?.vehicle?.model || "Unknown Model";

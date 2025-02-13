@@ -16,6 +16,22 @@ const Settings = () => {
   const [cameraStream, setCameraStream] = useState(null);
 
   const [nightMode, setNightMode] = useState(false);
+  const [daisyTheme, setDaisyTheme] = useState("light");
+
+useEffect(() => {
+  // Load theme from localStorage (if available)
+  const storedTheme = localStorage.getItem("daisyTheme") || "light";
+  setDaisyTheme(storedTheme);
+  document.documentElement.setAttribute("data-theme", storedTheme);
+}, []);
+
+const handleThemeChange = (e) => {
+  const newTheme = e.target.value;
+  setDaisyTheme(newTheme);
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("daisyTheme", newTheme); // Store in local storage
+};
+
 
   useEffect(() => {
     fetchUserProfile();
@@ -94,16 +110,18 @@ const Settings = () => {
         },
       });
   
-      // Update user state with the new profile picture URL
+      // **Immediately update the state to reflect new profile image**
       setUser((prev) => ({
         ...prev,
-        profilePicture: res.data.user.profilePicture,
+        profilePicture: `http://localhost:4000${res.data.user.profilePicture}?t=${new Date().getTime()}`,
       }));
+  
       setShowProfileModal(false);
     } catch (err) {
       console.error("Error uploading profile picture:", err);
     }
   };
+  
   
   const handleOpenCamera = async () => {
     try {
@@ -124,17 +142,28 @@ const Settings = () => {
     const video = document.getElementById("cameraFeed");
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-
+  
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+  
+    // Convert to Data URL
     const imageData = canvas.toDataURL("image/png");
-    handleFileUpload(dataURItoBlob(imageData));
+  
+    // Convert Data URL to Blob
+    const imageBlob = dataURItoBlob(imageData);
+  
+    // **Set the new image immediately in the UI**
+    const previewUrl = URL.createObjectURL(imageBlob);
+    setUser((prev) => ({ ...prev, profilePicture: previewUrl }));
+  
+    // **Upload the file to the server**
+    handleFileUpload(imageBlob);
+  
+    // **Stop camera only after the image is updated**
     stopCamera();
   };
-
+  
   const stopCamera = () => {
     if (cameraStream) {
       cameraStream.getTracks().forEach((track) => track.stop());
@@ -195,196 +224,152 @@ const Settings = () => {
 
 
   return (
-    <div className={`h-screen w-full flex flex-col `}>
+    <div className="min-h-screen w-full flex flex-col bg-base-100 p-6 gap-6">
       {/* Header */}
-      <div className={`px-4 py-3 flex items-center`}>
-        <button onClick={() => navigate(-1)} className="text-2xl mr-4">
-          <i className="ri-arrow-left-line"></i>
+      <div className="flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="btn btn-ghost text-xl">
+          <i className="ri-arrow-left-line"></i> Settings
         </button>
-        <h1 className="text-xl font-semibold">Settings</h1>
       </div>
-
+  
       {/* Profile Section */}
-      <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg">
-      {console.log(user?.profilePicture)} {/* Debugging */}
-      <img
-  src={user?.profilePicture ? `${user.profilePicture}?${new Date().getTime()}` : defaultAvatar}
-  alt="Profile"
-  className="w-16 h-16 rounded-full cursor-pointer border"
-  onClick={() => setShowProfileModal(true)}
-/>
-
-
-
-        <div >
-          <h2 className="text-lg font-bold">{user?.fullname?.firstname || "Firstname"} {user?.fullname?.lastname || "Lastname"}</h2>
-          <p className="text-gray-600 dark:text-gray-300">{user?.phonenumber || "Phone Number"}</p>
+      <div className="card bg-base-200 shadow-md p-6 flex items-center gap-4">
+        <img
+          src={
+            user?.profilePicture
+              ? `http://localhost:4000${user.profilePicture}?t=${new Date().getTime()}`
+              : defaultAvatar
+          }
+          alt="Profile"
+          className="w-24 h-24 rounded-full border-4 border-primary object-cover cursor-pointer transition-all hover:scale-105"
+          onClick={() => setShowProfileModal(true)}
+          onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }}
+        />
+        <div className="text-center">
+          <h2 className=" font-bold capitalize">
+            {user?.fullname?.firstname || "Firstname"} {user?.fullname?.lastname || "Lastname"}
+          </h2>
+          <p className="text-sm text-gray-500">{user?.phonenumber || "No phone number"}</p>
         </div>
       </div>
-
+  
       {/* Settings Options */}
-      <div className="flex flex-col mt-4 px-1 space-y-4">
-      
-
-     {/* Night Mode */}
-     <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg">
-          <i className="ri-moon-line text-xl"></i>
-          <span className="text-lg">Night Mode</span>
-          <input
-            type="checkbox"
-            className="ml-auto h-5 w-5"
-            checked={nightMode}
-            onChange={toggleNightMode}
-          />
+      <div className="flex flex-col gap-4">
+        {/* Theme Selector */}
+        <div className="flex items-center bg-base-200 p-4 rounded-lg shadow">
+          <i className="ri-palette-line text-xl text-primary"></i>
+          <span className="ml-3 text-lg font-medium">Theme</span>
+          <select
+            value={daisyTheme}
+            onChange={handleThemeChange}
+            className="ml-auto select select-bordered"
+          >
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="cupcake">Cupcake</option>
+            <option value="corporate">Corporate</option>
+            <option value="synthwave">Synthwave</option>
+            <option value="retro">Retro</option>
+            <option value="cyberpunk">Cyberpunk</option>
+            <option value="valentine">Valentine</option>
+            <option value="halloween">Halloween</option>
+          </select>
         </div>
-
+  
         {/* Logout */}
-        <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg cursor-pointer" onClick={() => setShowLogoutModal(true)}>
-          <i className="ri-logout-box-line text-xl text-black-500"></i>
-          <span className="text-lg text-black-500">Logout</span>
+        <div className="flex items-center bg-base-200 p-4 rounded-lg shadow cursor-pointer hover:bg-error hover:text-white transition" onClick={() => setShowLogoutModal(true)}>
+          <i className="ri-logout-box-line text-xl"></i>
+          <span className="ml-3 text-lg font-medium">Logout</span>
         </div>
-
+  
         {/* Delete Account */}
-        <div className="bg-white dark:bg-gray-700 p-3 flex items-center gap-4 border-b rounded-lg cursor-pointer" onClick={() => setShowDeleteModal(true)}>
-          <i className="ri-delete-bin-line text-xl text-black-500"></i>
-          <span className="text-lg text-black-500">Delete Account</span>
+        <div className="flex items-center bg-base-200 p-4 rounded-lg shadow cursor-pointer hover:bg-red-500 hover:text-white transition" onClick={() => setShowDeleteModal(true)}>
+          <i className="ri-delete-bin-line text-xl"></i>
+          <span className="ml-3 text-lg font-medium">Delete Account</span>
         </div>
       </div>
-
-      {/* Save Settings Button */}
-      <div className="flex-grow"></div>
-      <div className="px-4 py-3">
-        <button
-          onClick={updateSettings}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md w-full hover:bg-blue-600"
-        >
-          Save Settings
-        </button>
-      </div>
-
+  
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-72">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-72">
             <h2 className="text-lg font-semibold mb-4">Choose an Option</h2>
-            <button
-              onClick={handleOpenCamera}
-              className="w-full bg-blue-500 text-white py-2 rounded-md mb-2 hover:bg-blue-600"
-            >
+            <button onClick={handleOpenCamera} className="btn btn-primary w-full mb-2">
               Take a Picture
             </button>
-            <button
-              onClick={() => document.getElementById("galleryInput").click()}
-              className="w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600"
-            >
+            <button onClick={() => document.getElementById("galleryInput").click()} className="btn bg-orange-500 text-white w-full mb-2">
               Choose from Gallery
             </button>
-            <button
-        onClick={handleRemovePicture}
-        className="w-full bg-red-500 text-white py-2 rounded-md mt-2 hover:bg-red-600"
-      >
-        Remove Picture
-      </button>
-            <button
-              onClick={() => setShowProfileModal(false)}
-              className="w-full bg-gray-300 text-gray-800 py-2 rounded-md mt-4 hover:bg-gray-400"
-            >
+            <button onClick={handleRemovePicture} className="btn btn-error w-full">
+              Remove Picture
+            </button>
+            <button onClick={() => setShowProfileModal(false)} className="btn btn-neutral w-full mt-4">
               Cancel
             </button>
           </div>
         </div>
       )}
-
+  
       {/* Camera Modal */}
       {showCameraModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-72 flex flex-col items-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-72 flex flex-col items-center">
             <video
               id="cameraFeed"
               autoPlay
               playsInline
-              style={{ width: "100%", borderRadius: "8px" }}
+              className="w-full rounded-lg border"
               ref={(video) => {
                 if (video) video.srcObject = cameraStream;
               }}
             ></video>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={captureImage}
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-              >
-                Capture
-              </button>
-              <button
-                onClick={stopCamera}
-                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-              >
-                Cancel
-              </button>
+            <div className="flex gap-4 mt-4">
+              <button onClick={captureImage} className="btn btn-primary">Capture</button>
+              <button onClick={stopCamera} className="btn btn-error">Cancel</button>
             </div>
           </div>
         </div>
       )}
-
+  
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-72">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p className="text-gray-500">Are you sure you want to logout?</p>
+            <div className="flex gap-4 mt-4">
+              <button onClick={handleLogout} className="btn btn-error">Yes</button>
+              <button onClick={() => setShowLogoutModal(false)} className="btn btn-neutral">No</button>
+            </div>
+          </div>
+        </div>
+      )}
+  
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-72">
+            <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
+            <p className="text-gray-500">Are you sure you want to delete your account?</p>
+            <div className="flex gap-4 mt-4">
+              <button onClick={handleDeleteAccount} className="btn btn-error">Yes</button>
+              <button onClick={() => setShowDeleteModal(false)} className="btn btn-neutral">No</button>
+            </div>
+          </div>
+        </div>
+      )}
+  
       {/* Hidden Input for Gallery */}
       <input
         type="file"
         accept="image/*"
         id="galleryInput"
-        style={{ display: "none" }}
+        className="hidden"
         onChange={(e) => handleFileUpload(e.target.files[0])}
       />
-
-      {/* Logout Modal */}
-      {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-72">
-            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
-            <p className="mb-4">Are you sure you want to logout?</p>
-            <div className="flex gap-4">
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
-              >
-                No
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
- {/* Delete Account Modal */}
-{showDeleteModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg p-6 w-72">
-      <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
-      <p className="mb-4">Are you sure you want to delete your account? This action is irreversible.</p>
-      <div className="flex gap-4">
-        <button
-          onClick={handleDeleteAccount}
-          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-        >
-          Yes, Delete
-        </button>
-        <button
-          onClick={() => setShowDeleteModal(false)}
-          className="bg-gray-300 px-4 py-2 rounded-md hover:bg-gray-400"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
     </div>
   );
+  
 };
 
 export default Settings;
