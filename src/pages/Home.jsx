@@ -79,6 +79,7 @@ const Home = () => {
 
           const address = response.data.display_name;
           setPickup(address); // Automatically set pickup field
+          console.log('pickup set '+pickup);
         } catch (error) {
           console.error("Error fetching address from coordinates:", error);
         }
@@ -118,27 +119,65 @@ const Home = () => {
     handlePanelState(); // Correct function name
   }, [vehiclePanel, confirmRidePanel, vehicleFound, waitingForDriver]);
   
-  const handlePickupChange = async (e) => {
+  // const handlePickupChange = async (e) => {
 
-    setPickup(e.target.value);
+  //   setPickup(e.target.value);
+  //   console.log('pickup updated');
+  //   if (errors.pickup) {
+  //     setErrors((prevErrors) => ({ ...prevErrors, pickup: false }));
+  //   }
+  //   try {
+  //     const response = await axios.get(
+  //       `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+  //       {
+  //         params: { input: e.target.value },
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //       }
+  //     );
+  //     setPickupSuggestions(response.data);
+  //   } catch {
+  //     // handle error
+  //   }
+  // };
+
+  const handlePickupChange = (e) => {
+    const input = e.target.value;
+    setPickup(input);
+  
     if (errors.pickup) {
       setErrors((prevErrors) => ({ ...prevErrors, pickup: false }));
     }
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-        {
-          params: { input: e.target.value },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setPickupSuggestions(response.data);
-    } catch {
-      // handle error
+  
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
     }
+  
+    debounceTimeout.current = setTimeout(async () => {
+      if (!input.trim()) {
+        setPickupSuggestions([]);
+        return;
+      }
+  
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
+          {
+            params: { input },
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          }
+        );
+  
+        setPickupSuggestions(Array.isArray(response.data) ? response.data : []);
+      } catch (error) {
+        console.error("Error fetching pickup suggestions:", error);
+        setPickupSuggestions([]);
+      }
+    }, 500); // **Delays API request until user stops typing for 500ms**
   };
+  
+  
 
   const handleDestinationChange = async (e) => {
     const input = e.target.value;
@@ -326,6 +365,7 @@ const Home = () => {
   // }
 
   async function createRide() {
+    console.log("clientside create ride called");
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/rides/create`,
@@ -346,7 +386,7 @@ const Home = () => {
         setVehicleFound(true); // Show "Looking for Driver" screen
   
         // Emit ride request to captains
-        socket.emit("new-ride", response.data);
+        // socket.emit("new-ride", response.data);
       }
     } catch (error) {
       console.error("Error creating ride:", error);
@@ -432,7 +472,7 @@ const Home = () => {
     className={`px-4 py-2 rounded-md mt-1 w-full ${
       pickup && destination
         ? "bg-black text-white"
-        : "bg-gray-400 text-gray-200 cursor-not-allowed"
+        : "bg-black text-gray-200 cursor-not-allowed"
     }`}
   >
     Find Trip

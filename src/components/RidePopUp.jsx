@@ -1,13 +1,10 @@
 import React from "react";
-
+import defaultAvatar from "../assets/image.jpeg"; 
 
 const RidePopUp = (props) => {
   const ride = props.ride;
-  const userImage = ride?.user?.profileImage || "https://via.placeholder.com/150";
-  const userName = `${ride?.user?.fullname?.firstname || "Unknown"} ${ride?.user?.fullname?.lastname || ""}`;
   const distance = ride?.distance || "Calculating...";
   const duration = ride?.duration || "Calculating...";
-  const fare = ride?.fare || 0;
   return (
     <div>
       <h5
@@ -22,12 +19,14 @@ const RidePopUp = (props) => {
       <div className="flex items-center justify-between p-3 bg-yellow-500 rounded-lg mt-4 ">
         <div className="flex items-center gap-3 ">
           <img
-            cclassName="h-12 w-12 rounded-full object-cover"
-            src={userImage}
-            alt="User"
+            src={user?.profilePicture ? `http://localhost:4000${user.profilePicture}?t=${new Date().getTime()}` : defaultAvatar}
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-primary object-cover cursor-pointer"
+            onClick={() => setShowProfileModal(true)}
+            onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }}
           />
           <h2 className="text-lg font-medium">
-          {userName}
+          {user?.fullname?.firstname || "Firstname"} {user?.fullname?.lastname || "Lastname"}
           </h2>
         </div>
         <h5 className="text-lg font-semibold">{distance}</h5>
@@ -57,7 +56,7 @@ const RidePopUp = (props) => {
             <i className="ri-currency-line"></i>
             <div>
             <h3 className="text-lg font-medium">Fare</h3>
-              <p className="text-sm -mt-1 text-gray-600">Rs.{fare}</p>
+              <p className="text-sm -mt-1 text-gray-600">Rs.{fare?.[vehicleType] ?? "Calculating..."}</p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-3">

@@ -22,7 +22,7 @@ const Riding = () => {
 
   // Extracting captain details
 
-  const captainName = `${ride?.captain?.fullname?.firstname || "Unknown"} ${ride?.captain?.fullname?.lastname || ""}`;
+
   const vehiclePlate = ride?.captain?.vehicle?.plate || "Unknown Plate";
   const vehicleModel = ride?.captain?.vehicle?.model || "Unknown Model";
   const fare = ride?.fare || 0;
@@ -62,7 +62,10 @@ const Riding = () => {
 />
 
           <div className="flex-1">
-            <h2 className="text-lg font-semibold">{captainName}</h2>
+            <h2 className="text-lg font-semibold">{captain?.fullname?.firstname || "Firstname"} {captain?.fullname?.lastname || "Lastname"}</h2>
+            <p className="text-sm text-gray-600">
+              📞 {captain?.phonenumber || "No Contact"} 
+            </p>
             <p className="text-sm text-gray-600">Vehicle: {vehicleModel} - {vehiclePlate}</p>
           </div>
         </div>

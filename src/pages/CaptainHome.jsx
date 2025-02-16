@@ -3,13 +3,13 @@ import axios from "axios";
 import gsap from "gsap";
 import React, { useContext, useEffect, useRef, useState } from "react";
 
+import { useNavigate } from "react-router-dom"; // Added this line
 import CaptainDetails from "../components/CaptainDetails";
 import ConfirmRidePopUp from "../components/ConfirmRidePopUp";
 import LiveTracking from "../components/LiveTracking"; // 
 import RidePopUp from "../components/RidePopUp";
 import { CaptainDataContext } from "../context/CaptainContext";
 import { SocketContext } from "../context/SocketContext";
-import { useNavigate } from "react-router-dom"; // Added this line
 
 
 const CaptainHome = () => {
@@ -27,34 +27,86 @@ const CaptainHome = () => {
 
 
 
-  useEffect(() => {
-    if (captain) {
-      socket.emit("join", {
-        userId: captain._id || "default-id",
-        userType: "captain",
-      });
+  // useEffect(() => {
+  //   if (captain) {
+  //     socket.emit("join", {
+  //       userId: captain._id || "default-id",
+  //       userType: "captain",
+  //     });
 
-      const updateLocation = () => {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            socket.emit("update-location-captain", {
-              userId: captain._id,
-              location: {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              },
-            });
-          });
-        }
-      };
+  //     const updateLocation = () => {
+  //       if (navigator.geolocation) {
+  //         navigator.geolocation.getCurrentPosition((position) => {
+  //           socket.emit("update-location-captain", {
+  //             userId: captain._id,
+  //             location: {
+  //               lat: position.coords.latitude,
+  //               lng: position.coords.longitude,
+  //             },
+  //           });
+  //         });
+  //       }
+  //     };
 
-      const locationInterval = setInterval(updateLocation, 10000);
-      updateLocation();
+  //     const locationInterval = setInterval(updateLocation, 10000);
+  //     updateLocation();
 
-      return () => clearInterval(locationInterval);
+  //     return () => clearInterval(locationInterval);
+  //   }
+  // }, [captain, socket]);
+
+
+  const updateLocation = () => {
+    if (!navigator.geolocation) {
+      console.warn("❌ Geolocation is not supported by this browser.");
+      return;
     }
-  }, [captain, socket]);
-
+  
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log("captain id", captain._id);
+        console.log("📍 Updating location...", position.coords);
+  
+        // ✅ Emit location update to backend
+        socket.emit("update-location-captain", {
+          userId: captain._id,
+          location: {
+            ltd: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+        });
+      },
+      (error) => {
+        switch (error.code) {
+          case 1:
+            console.error("❌ Location permission denied. Enable it in browser settings.");
+            alert("Please enable location permissions.");
+            break;
+          case 2:
+            console.error("❌ Location unavailable. Ensure GPS is ON & retrying in 5 seconds...");
+            setTimeout(updateLocation, 5000); // ✅ Retry after 5 seconds
+            break;
+          case 3:
+            console.error("❌ Location request timed out. Retrying in 3 seconds...");
+            setTimeout(updateLocation, 3000); // ✅ Retry quickly
+            break;
+          default:
+            console.error("❌ Unknown geolocation error:", error);
+        }
+      },
+      {
+        enableHighAccuracy: true, // ✅ Use GPS for better accuracy
+        timeout: 30000, // ✅ Increased timeout (30s)
+        maximumAge: 5000, // ✅ Allow recent location to be used
+      }
+    );
+  };
+  
+  // ✅ Automatically update location every 10 seconds
+  const locationInterval = setInterval(updateLocation, 10000);
+  updateLocation(); // ✅ Run once immediately
+  
+  
   useEffect(() => {
     socket.on("new-ride", (rideData) => {
       setRide(rideData);
@@ -126,6 +178,7 @@ const CaptainHome = () => {
     },
     [confirmRidePopupPanel]
   );
+
 
   return (
     <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">

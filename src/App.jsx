@@ -1,7 +1,8 @@
-import React from "react";
+
 import { Route, Routes } from "react-router-dom";
 import LookingForDriver from "./components/LookingForDriver";
-import RiderList from "./components/RiderList";
+// import RiderList from "./components/RiderList";
+import React, { useEffect, useState } from "react"; // ✅ Fix: Imported useState & useEffect
 import AdminLogin from "./pages/Admin/AdminLogin";
 import Captains from "./pages/Admin/Captains";
 import Dashboard from "./pages/Admin/Dashboard";
@@ -26,7 +27,16 @@ import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
 
+
 const App = () => {
+  const [daisyTheme, setDaisyTheme] = useState("light");
+
+  useEffect(() => {
+    // Load theme from localStorage and apply it globally
+    const storedTheme = localStorage.getItem("daisyTheme") || "light";
+    setDaisyTheme(storedTheme);
+    document.documentElement.setAttribute("data-theme", storedTheme);
+  }, []);
   return (
     <Routes>
       {/* Start Page */}
@@ -39,11 +49,17 @@ const App = () => {
       <Route path="/login" element={<UserLogin />} />
       <Route path="/signup" element={<UserSignup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/settings" element={<Settings />} />
-      <Route path="/ride-list" element={<RiderList />} />
+      <Route
+          path="/settings"
+          element={<Settings setDaisyTheme={setDaisyTheme} />}
+        />
+      {/* <Route path="/ride-list" element={<RiderList />} /> */}
 
 
-<Route path="/captain-settings" element={<CaptainSettings />} />
+      <Route
+          path="/captain-settings"
+          element={<CaptainSettings setDaisyTheme={setDaisyTheme} />}
+        />
 <Route path="/lookingforrider" element={<LookingForDriver />} />
 
 {/* //AdminRoutes */}
