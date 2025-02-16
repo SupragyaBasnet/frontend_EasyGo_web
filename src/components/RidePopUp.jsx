@@ -104,7 +104,7 @@ const RidePopUp = (props) => {
   const vehicleType = ride?.vehicleType || "N/A";
 
   return (
-    <div>
+    <div className="min-h-[100vh] h-auto w-full bg-white p-6 rounded-t-2xl shadow-lg mt-10">
       <h5
         className="p-1 text-center w-[93%] absolute top-0"
         onClick={() => {

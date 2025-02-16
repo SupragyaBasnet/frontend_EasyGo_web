@@ -1,16 +1,17 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import defaultAvatar from "../assets/image.jpeg";
 
 const ConfirmRidePopUp = (props) => {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
-  const ride = props.ride;
+  const ride = props.ride || {};
+  const user = ride?.user || {};
 
   // Get ride details
-  const userImage = ride?.user?.profileImage || "https://via.placeholder.com/150";
-  const userName = `${ride?.user?.fullname?.firstname || "Unknown"} ${ride?.user?.fullname?.lastname || ""}`;
+
   const distance = ride?.distance || "Calculating...";
   const duration = ride?.duration || "Calculating...";
   const fare = ride?.fare || 0;
@@ -42,7 +43,7 @@ const ConfirmRidePopUp = (props) => {
   };
 
   return (
-    <div>
+    <div className="min-h-[100vh] h-auto w-full bg-white p-6 rounded-t-2xl shadow-lg mt-10">
       <h5
         className="p-1 text-center w-[93%] absolute top-0"
         onClick={() => props.setConfirmRidePopupPanel(false)}
@@ -54,14 +55,15 @@ const ConfirmRidePopUp = (props) => {
       {/* Ride Details */}
       <div className="flex items-center justify-between p-3 border-2 border-yellow-500 rounded-lg mt-4">
         <div className="flex items-center gap-3">
-          <img
-            className="h-12 w-12 rounded-full object-cover"
-            src={userImage}
-            alt="User"
+        <img
+            src={user?.profilePicture ? `http://localhost:4000${user.profilePicture}?t=${new Date().getTime()}` : defaultAvatar}
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-primary object-cover cursor-pointer"
+            onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }}
           />
-          <h2 className="text-lg font-medium capitalize">{userName}</h2>
+          <h2 className="text-lg font-medium capitalize">{user?.fullname?.firstname || "Firstname"} {user?.fullname?.lastname || "Lastname"}</h2>
         </div>
-        <h5 className="text-lg font-semibold">{distance}</h5>
+        <h5 className="text-lg font-semibold">{distance} km</h5>
       </div>
 
       <div className="flex gap-2 justify-between flex-col items-center">
@@ -89,7 +91,7 @@ const ConfirmRidePopUp = (props) => {
             <i className="ri-currency-line"></i>
             <div>
               <h3 className="text-lg font-medium">Fare</h3>
-              <p className="text-sm text-gray-600">₹{fare}</p>
+              <p className="text-sm text-gray-600">Rs.{fare}</p>
             </div>
           </div>
 
@@ -98,7 +100,7 @@ const ConfirmRidePopUp = (props) => {
             <i className="ri-timer-line"></i>
             <div>
               <h3 className="text-lg font-medium">Duration</h3>
-              <p className="text-sm text-gray-600">{duration}</p>
+              <p className="text-sm text-gray-600">{duration} min</p>
             </div>
           </div>
         </div>

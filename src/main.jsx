@@ -9,14 +9,14 @@ import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>  {/* ✅ Router should wrap everything */}
-      <CaptainContext>
-        <UserContext>
-          <SocketProvider>
-            <App />
-          </SocketProvider>
-        </UserContext>
-      </CaptainContext>
-    </BrowserRouter>
+   <CaptainContext>
+    <UserContext>
+      <SocketProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </SocketProvider>
+    </UserContext>
+  </CaptainContext>
   </StrictMode>
 );

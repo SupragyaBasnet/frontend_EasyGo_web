@@ -113,7 +113,7 @@ const CaptainHome = () => {
     socket.on("new-ride", (rideData) => {
       setRide(rideData);
       setRidePopupPanel(true);
-      setShowMap(false);
+      setShowMap(true);
     });
 
     socket.on("ride-started", () => {
@@ -185,7 +185,7 @@ const CaptainHome = () => {
 
 
   return (
-    <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col">
+    <div className="h-screen w-full max-w-screen overflow-hidden flex flex-col relative">
       {/* Settings Icon */}
     <div
       className="absolute z-[1000] flex flex-col items-center gap-2"
@@ -201,13 +201,13 @@ const CaptainHome = () => {
 
     </div>
       {showMap && (
-        <div className="h-[65%] w-full relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full z-0">
           <LiveTracking />
         </div>
       )}
 
       {/* Captain Details and Ride Controls */}
-      <div className="h-[35%] w-full bg-white p-6 absolute bottom-0 rounded-t-2xl shadow-md">
+      <div className="h-[35%] w-full bg-white p-6 absolute bottom-0 rounded-t-2xl shadow-md z-40">
         <CaptainDetails />
       </div>
 
@@ -215,7 +215,7 @@ const CaptainHome = () => {
       {ridePopupPanel && (
   <div
     ref={ridePopupPanelRef}
-    className="fixed bottom-0 left-0 w-full z-50 bg-white px-3 py-6 shadow-lg transition-transform"
+    className="absolute top-0 left-0 w-full z-50 bg-white px-3 py-6 shadow-lg transition-transform"
   >
     <RidePopUp
       ride={ride} // Pass the actual ride data
@@ -230,7 +230,9 @@ const CaptainHome = () => {
 
 <div
   ref={confirmRidePopupPanelRef}
-  className="fixed bottom-0 left-0 w-full z-50 bg-white px-3 py-6 shadow-lg transform translate-y-full transition-transform"
+  className={`fixed inset-0 w-full h-full z-[100] bg-white px-3 py-6 shadow-lg transition-transform ${
+    confirmRidePopupPanel ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+  }`}
 >
   <ConfirmRidePopUp
     ride={ride} // Replace with actual ride data
