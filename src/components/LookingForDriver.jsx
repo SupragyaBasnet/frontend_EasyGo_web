@@ -113,6 +113,7 @@ const LookingForDriver = () => {
   useEffect(() => {
     // ✅ Listen for ride confirmation
     socket.on("ride-confirmed", (ride) => {
+      console.log("ride accepted ==================",ride);
       setRideData(ride);
     });
 

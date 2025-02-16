@@ -29,10 +29,7 @@ const CaptainHome = () => {
 
   // useEffect(() => {
   //   if (captain) {
-  //     socket.emit("join", {
-  //       userId: captain._id || "default-id",
-  //       userType: "captain",
-  //     });
+      
 
   //     const updateLocation = () => {
   //       if (navigator.geolocation) {
@@ -67,6 +64,10 @@ const CaptainHome = () => {
         console.log("captain id", captain._id);
         console.log("📍 Updating location...", position.coords);
   
+        socket.emit("join", {
+          userId: captain._id || "default-id",
+          userType: "captain",
+        });
         // ✅ Emit location update to backend
         socket.emit("update-location-captain", {
           userId: captain._id,
@@ -108,6 +109,7 @@ const CaptainHome = () => {
   
   
   useEffect(() => {
+    
     socket.on("new-ride", (rideData) => {
       setRide(rideData);
       setRidePopupPanel(true);
@@ -123,6 +125,8 @@ const CaptainHome = () => {
       socket.off("ride-started");
     };
   }, [socket]);
+
+  
 
   const confirmRide = async () => {
     try {

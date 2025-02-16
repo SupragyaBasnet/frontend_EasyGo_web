@@ -46,10 +46,6 @@ const Home = () => {
   const { user } = useContext(UserDataContext);
 
   useEffect(() => {
-    if (user?._id) {
-      socket.emit("join", { userType: "user", userId: user._id });
-    }
-
     // Automatically fetch current location on mount
     getCurrentLocation();
   }, [user]);
@@ -58,6 +54,11 @@ const Home = () => {
     if (!navigator.geolocation) {
       console.error("Geolocation is not supported by this browser.");
       return;
+    }
+
+    console.log("\n============== user joining socket ==========\n", user);
+    if (user?._id) {
+      socket.emit("join", { userType: "user", userId: user._id });
     }
 
     navigator.geolocation.getCurrentPosition(
