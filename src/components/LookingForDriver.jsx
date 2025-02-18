@@ -127,14 +127,14 @@ const LookingForDriver = (props) => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full  z-50 px-6 sm:px-10 md:px-16 overflow-y-auto">
+    <div className="fixed top-0 left-0 w-full h-full  z-50 px-6 sm:px-10 md:px-16 overflow-y-auto" >
       <h5
         className="p-1 text-center w-[93%] absolute top-0"
         onClick={() => setVehicleFound(false)}
       >
         <i className="text-3xl text-gray-200 ri-arrow-down-wide-line"></i>
       </h5>
-      <h3 className="text-2xl font-semibold text-center mt-8 mb-6">Looking For Rider</h3>
+      <h3 className="text-2xl font-semibold text-center mt-8 mb-6">Looking for Driver</h3>
 
       {/* Vehicle Image */}
       <div className="flex justify-center mb-6">
@@ -168,7 +168,6 @@ const LookingForDriver = (props) => {
             <h3 className="text-lg font-medium">
               Rs.{fare?.[vehicleType] ?? "Calculating..."}
             </h3>
-            <p className="text-sm text-gray-600">Cash Payment</p>
             </div>
           </div>
         </div>

@@ -68,7 +68,7 @@ const ConfirmRide = ({
             <h3 className="text-lg font-medium">
               Rs.{fare?.[vehicleType] ?? "Calculating..."}
             </h3>
-            <p className="text-sm text-gray-600">Cash Payment</p>
+            
           </div>
         </div>
       </div>
