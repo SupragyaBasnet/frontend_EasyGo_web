@@ -70,9 +70,11 @@ import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
 const WaitingForDriver = (props) => {
+  console.log("waiting for driver \n ", props);
+
   // Function to get the correct vehicle image
   const getVehicleImage = () => {
-    const vehicleType = props.ride?.captain.vehicle.vehicleType;
+    const vehicleType = props.ride.captain.vehicle.vehicleType;
 
     switch (vehicleType) {
       case "auto":
@@ -91,7 +93,8 @@ const WaitingForDriver = (props) => {
       {/* Close Button */}
       <h5
         className="p-1 text-center w-[93%] absolute top-0"
-        onClick={() => props.waitingForDriver(false)}
+        onClick={() => props.setWaitingForDriver(false)}
+        
       >
         <i className=" text-3xl text-gray-600 ri-arrow-down-wide-line"></i>
       </h5>
@@ -101,16 +104,16 @@ const WaitingForDriver = (props) => {
         <img className="h-12" src={getVehicleImage()} alt="Vehicle" />
         <div className="text-right">
           <h2 className="text-lg font-medium capitalize">
-            {props.ride?.captain.fullname.firstname}{" "}
-            {props.ride?.captain.fullname.lastname}
+            {props.ride.captain.fullname.firstname}{" "}
+            {props.ride.captain.fullname.lastname}
           </h2>
           <h4 className="text-xl font-semibold -mt-1 -mb-1">
-            {props.ride?.captain.vehicle.plate}
+            {props.ride.captain.vehicle.plate}
           </h4>
           <p className="text-sm text-gray-600">
-            {props.ride?.captain.vehicle.name} {/* Dynamic Vehicle Name */}
+            {props.ride.captain.vehicle.name} {/* Dynamic Vehicle Name */}
           </p>
-          <h1 className="text-lg font-semibold"> {props.ride?.otp} </h1>
+          <h1 className="text-lg font-semibold"> {props.otp} </h1>
         </div>
       </div>
 
@@ -123,7 +126,7 @@ const WaitingForDriver = (props) => {
             <div>
               <h3 className="text-lg font-medium">Pickup</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                {props.ride?.pickup}
+                {props.ride.pickup}
               </p>
             </div>
           </div>
@@ -134,7 +137,7 @@ const WaitingForDriver = (props) => {
             <div>
               <h3 className="text-lg font-medium">Destination</h3>
               <p className="text-sm -mt-1 text-gray-600">
-                {props.ride?.destination}
+                {props.ride.destination}
               </p>
             </div>
           </div>
@@ -143,7 +146,7 @@ const WaitingForDriver = (props) => {
           <div className="flex items-center gap-5 p-3 ">
             <i className="ri-currency-line"></i>
             <div>
-              <h3 className="text-lg font-medium">Rs.{props.ride?.fare} </h3>
+              <h3 className="text-lg font-medium">Rs.{props.ride.fare} </h3>
             </div>
           </div>
         </div>

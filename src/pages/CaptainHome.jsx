@@ -229,7 +229,7 @@ const CaptainHome = () => {
 
 
 
-<div
+{/* <div
   ref={confirmRidePopupPanelRef}
   className={`fixed inset-0 w-full h-full z-[100] bg-white px-3 py-6 shadow-lg transition-transform ${
     confirmRidePopupPanel ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
@@ -240,7 +240,22 @@ const CaptainHome = () => {
     setConfirmRidePopupPanel={setConfirmRidePopupPanel}
     setRidePopupPanel={setRidePopupPanel}
   />
+</div> */}
+<div
+  ref={confirmRidePopupPanelRef}
+  className={`fixed inset-0 w-full h-full z-[100] bg-white px-3 py-6 shadow-lg transition-transform ${
+    confirmRidePopupPanel ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+  }`}
+>
+  {confirmRidePopupPanel && (
+    <ConfirmRidePopUp
+      ride={ride} // ✅ Ensures ride data is passed correctly
+      setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+      setRidePopupPanel={setRidePopupPanel}
+    />
+  )}
 </div>
+
 
     </div>
   );

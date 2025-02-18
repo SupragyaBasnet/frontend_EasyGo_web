@@ -69,7 +69,7 @@ const RidePopUp = (props) => {
           </div>
         </div>
         <div className="flex mt-5 w-full items-center justify-between gap-4">
-          <button
+          {/* <button
             onClick={() => {
               props.setConfirmRidePopupPanel(true); // ✅ Open ConfirmRidePopUp
               props.confirmRide(ride); // ✅ Pass ride data
@@ -78,7 +78,18 @@ const RidePopUp = (props) => {
             className="w-full bg-green-600 text-white font-semibold px-10 py-3 rounded-lg"
           >
             Accept
-          </button>
+          </button> */}
+          <button
+  onClick={() => {
+    console.log("🚀 Accept button clicked!"); // ✅ Debug log
+    props.setConfirmRidePopupPanel(true); // ✅ Show ConfirmRidePopUp
+    props.confirmRide(props.ride); // ✅ Pass ride data
+  }}
+  className="w-full bg-green-600 text-white font-semibold px-10 py-3 rounded-lg"
+>
+  Accept
+</button>
+
           <button
             onClick={() => {
               props.setRidePopupPanel(false);
