@@ -92,7 +92,11 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const cookieUser = JSON.parse(localStorage.getItem("user"));
+    console.log("\n\n user data ", cookieUser);
+    socket.emit("join", { userType: "user", userId: cookieUser._id });
     socket.on("ride-confirmed", (ride) => {
+      console.log("rider accepted ride\n", ride);
       setVehicleFound(false);
       setWaitingForDriver(true); // Show "Waiting for Driver" screen
       setRide(ride);

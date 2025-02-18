@@ -146,6 +146,7 @@ const CaptainHome = () => {
       if (response.status === 200) {
         setRidePopupPanel(false);
         setConfirmRidePopupPanel(true);
+        console.log("\n\n ride-confirm data: ",response.data);
         socket.emit("ride-confirmed", response.data);
       }
     } catch (error) {

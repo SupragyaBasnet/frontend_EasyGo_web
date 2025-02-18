@@ -30,10 +30,12 @@ const UserLogin = () => {
         userData
       );
 
+      console.log("Login response:", response.data);
+
       if (response.status === 200) {
         const data = response.data;
         setUser(data.user);
-        console.log("login user data ", user, data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
         navigate("/home");
       }

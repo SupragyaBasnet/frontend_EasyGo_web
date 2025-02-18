@@ -49,7 +49,7 @@ const UserSignup = () => {
         const data = response.data;
         setUser(data.user);
         localStorage.setItem("token", data.token);
-        navigate("/home");
+        navigate("/login");
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
