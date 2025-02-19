@@ -1,14 +1,39 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import defaultAvatar from "../assets/image.jpeg"; // Default avatar
 import LiveTracking from "../components/LiveTracking";
 import { SocketContext } from "../context/SocketContext";
-import defaultAvatar from "../assets/image.jpeg"; // Update with your default avatar path
 
 const Riding = () => {
   const location = useLocation();
-  const { ride } = location.state || {}; // Retrieve ride data
-  const { socket } = useContext(SocketContext);
   const navigate = useNavigate();
+  const { socket } = useContext(SocketContext);
+
+  // Ensure ride data is available, else redirect to home
+  const ride = location.state?.ride;
+  if (!ride) {
+    console.error("❌ Error: No ride data found in location.state");
+    navigate("/home");
+    return null;
+  }
+
+  // Extract captain and vehicle details safely
+  const captain = ride?.captain || {};
+  const vehicleName = captain?.vehicle?.name || "Unknown Vehicle"; // ✅ Use vehicle name
+  const vehiclePlate = captain?.vehicle?.plate || "Unknown Plate";
+  const vehicleType = captain?.vehicle?.vehicleType || "Unknown Type";
+
+  // Extract ride details safely
+  const fare = ride?.fare || "Calculating...";
+  const distance = ride?.distance || "Calculating...";
+  const duration = ride?.duration || "Calculating...";
+  const pickup = ride?.pickup || "Unknown Pickup";
+  const destination = ride?.destination || "Unknown Destination";
+
+  // Debugging logs to verify data
+  console.log("🚀 Debug: Received ride data:", ride);
+  console.log("🚀 Debug: Captain details:", captain);
+  console.log("🚀 Debug: Vehicle details:", captain?.vehicle);
 
   useEffect(() => {
     socket.on("ride-ended", () => {
@@ -19,17 +44,6 @@ const Riding = () => {
       socket.off("ride-ended");
     };
   }, [socket, navigate]);
-
-  // Extracting captain details
-
-
-  const vehiclePlate = ride?.captain?.vehicle?.plate || "Unknown Plate";
-  const vehicleModel = ride?.captain?.vehicle?.model || "Unknown Model";
-  const fare = ride?.fare || 0;
-  const distance = ride?.distance || "Calculating...";
-  const duration = ride?.duration || "Calculating...";
-  const pickup = ride?.pickup || "Unknown Pickup";
-  const destination = ride?.destination || "Unknown Destination";
 
   return (
     <div className="h-screen relative overflow-x-hidden">
@@ -50,23 +64,28 @@ const Riding = () => {
       <div className="h-1/2 p-4">
         {/* Captain Details */}
         <div className="flex items-center gap-4 border-b-2 pb-4">
-        <img
-  src={
-    captain?.profilePicture && captain.profilePicture.trim() !== "" 
-      ? `http://localhost:4000${captain.profilePicture}?t=${Date.now()}`
-      : defaultAvatar
-  }
-  onError={(e) => { e.target.onerror = null; e.target.src = defaultAvatar; }} // Handles broken links
-  alt="Captain"
-  className="h-10 w-10 rounded-full object-cover"
-/>
+          <img
+            src={
+              captain?.profilePicture
+                ? `http://localhost:4000${captain.profilePicture}?t=${new Date().getTime()}`
+                : defaultAvatar
+            }
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-primary object-cover cursor-pointer"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = defaultAvatar;
+            }}
+          />
 
           <div className="flex-1">
-            <h2 className="text-lg font-semibold">{captain?.fullname?.firstname || "Firstname"} {captain?.fullname?.lastname || "Lastname"}</h2>
-            <p className="text-sm text-gray-600">
-              📞 {captain?.phonenumber || "No Contact"} 
-            </p>
-            <p className="text-sm text-gray-600">Vehicle: {vehicleModel} - {vehiclePlate}</p>
+            <h2 className="text-lg font-semibold">
+              {captain?.fullname?.firstname || "Firstname"}{" "}
+              {captain?.fullname?.lastname || "Lastname"}
+            </h2>
+            <p className="text-sm text-gray-600">📞 {captain?.phonenumber || "No Contact"}</p>
+            <p className="text-sm text-gray-600">Vehicle: {vehicleName} - {vehiclePlate}</p>
+            <p className="text-sm text-gray-500">{vehicleType}</p> {/* ✅ Display vehicle type */}
           </div>
         </div>
 
@@ -95,7 +114,7 @@ const Riding = () => {
             <i className="ri-currency-line"></i>
             <div>
               <h3 className="text-lg font-medium">Fare</h3>
-              <p className="text-sm text-gray-600">₹{fare}</p>
+              <p className="text-sm text-gray-600">Rs.{fare}</p>
             </div>
           </div>
 
@@ -110,7 +129,7 @@ const Riding = () => {
 
           {/* Distance */}
           <div className="flex items-center gap-5 p-3">
-          <i className="ri-pin-distance-fill"></i>
+            <i className="ri-pin-distance-fill"></i>
             <div>
               <h3 className="text-lg font-medium">Distance</h3>
               <p className="text-sm text-gray-600">{distance}</p>

@@ -3,6 +3,7 @@ import defaultAvatar from "../assets/image.jpeg";
 import { useNavigate } from "react-router-dom";
 
 const RidePopUp = (props) => {
+  const navigate = useNavigate();
   const ride = props.ride || {}; // ✅ Ensure ride is always an object
   const user = ride?.user || {}; // ✅ Extract user data safely
   const distance = ride?.distance || "Calculating...";
@@ -84,6 +85,8 @@ const RidePopUp = (props) => {
     console.log("🚀 Accept button clicked!"); // ✅ Debug log
     props.setConfirmRidePopupPanel(true); // ✅ Show ConfirmRidePopUp
     props.confirmRide(props.ride); // ✅ Pass ride data
+   navigate("/captain-riding", { state: { ride: props.ride } });
+
   }}
   className="w-full bg-green-600 text-white font-semibold px-10 py-3 rounded-lg"
 >

@@ -1,14 +1,14 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
 const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {
   const [vehicleAvailability, setVehicleAvailability] = useState({
-    car: { time: "Calculating...", riders: "..." },
-    moto: { time: "Calculating...", riders: "..." },
-    auto: { time: "Calculating...", riders: "..." },
+    car: { time: "Calculating...", riders: "0" },
+    moto: { time: "Calculating...", riders: "0" },
+    auto: { time: "Calculating...", riders: "0" },
   });
 
   useEffect(() => {
@@ -19,11 +19,15 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
 
-        if (response.status === 200) {
+        console.log("🚀 API Response:", response.data); // ✅ Debug API response
+
+        if (response.status === 200 && response.data) {
           setVehicleAvailability(response.data);
+        } else {
+          console.error("❌ Invalid API response format:", response.data);
         }
       } catch (error) {
-        console.error("Error fetching vehicle availability:", error);
+        console.error("❌ Error fetching vehicle availability:", error);
       }
     };
 
@@ -45,7 +49,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         Choose a Vehicle
       </h3>
 
-      {/* Vehicle Options */}
+      {/* 🚗 Car Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -59,11 +63,11 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             EasyGo
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability.car.riders || "N/A"}
+              <i className="ri-user-3-fill"></i> {vehicleAvailability?.car?.riders ?? "0"}
             </span>
           </h4>
           <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability.car.time || "N/A"} away
+            {vehicleAvailability?.car?.time ? `${vehicleAvailability.car.time} min away` : "Calculating..."}
           </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, compact rides
@@ -74,6 +78,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         </h2>
       </div>
 
+      {/* 🏍️ Moto Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -87,11 +92,11 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             Moto
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability.moto.riders || "N/A"}
+              <i className="ri-user-3-fill"></i> {vehicleAvailability?.moto?.riders ?? "0"}
             </span>
           </h4>
           <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability.moto.time || "N/A"} away
+            {vehicleAvailability?.moto?.time ? `${vehicleAvailability.moto.time} min away` : "Calculating..."}
           </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, motorcycle rides
@@ -102,6 +107,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         </h2>
       </div>
 
+      {/* 🚜 Auto Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -115,11 +121,11 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
           <h4 className="font-medium text-base sm:text-lg">
             UberAuto
             <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability.auto.riders || "N/A"}
+              <i className="ri-user-3-fill"></i> {vehicleAvailability?.auto?.riders ?? "0"}
             </span>
           </h4>
           <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability.auto.time || "N/A"} away
+            {vehicleAvailability?.auto?.time ? `${vehicleAvailability.auto.time} min away` : "Calculating..."}
           </h5>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable Auto rides

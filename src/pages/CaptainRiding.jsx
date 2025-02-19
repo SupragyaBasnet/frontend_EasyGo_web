@@ -52,7 +52,7 @@ const CaptainRiding = () => {
         >
       
         </h5>
-        <h4 className="text-xl font-semibold">{distance} away - {duration} </h4> {/* Dynamic Distance & Duration */}
+        <h4 className="text-xl font-semibold">{distance} km - {duration} min </h4> {/* Dynamic Distance & Duration */}
         <button
           onClick={() => setFinishRidePanel(true)}
           className="bg-green-600 text-white font-semibold px-6 py-2 rounded-lg"
