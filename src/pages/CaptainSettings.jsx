@@ -30,51 +30,78 @@ const CaptainSettings = () => {
 
   const fetchCaptainProfile = async () => {
     try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_BASE_URL}/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-
-        console.log("Fetched Captain Profile:", res.data.captain); // ✅ Debug API response
-
-        if (res.data.captain) {
-            setCaptain(res.data.captain);
-            setTheme(res.data.captain.theme || "light");
-            document.documentElement.setAttribute("data-theme", res.data.captain.theme || "light");
-        }
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API_BASE_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      console.log("✅ Fetched Captain Profile:", res.data.captain); // Debug API response
+  
+      if (res.data.captain) {
+        setCaptain(res.data.captain);
+        setTheme(res.data.captain.theme || "light");
+        document.documentElement.setAttribute("data-theme", res.data.captain.theme || "light");
+  
+        console.log("✅ Updated State After Fetch:", res.data.captain);
+      }
+  
     } catch (err) {
-        console.error("Error fetching captain profile:", err);
+      console.error("❌ Error fetching captain profile:", err);
     }
-};
+  };
+  
 
-
-
-const handleFileUpload = async (file) => {
+const handleFileUpload = async (file, type) => {
   if (!file) return;
 
   const formData = new FormData();
-  formData.append("profilePicture", file);
+  formData.append(type === "license" ? "licensePicture" : "profilePicture", file);
 
   try {
-      const token = localStorage.getItem("token");
-      const res = await axios.post(`${API_BASE_URL}/upload-profilePicture`, formData, {
-          headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-          },
-      });
+    const token = localStorage.getItem("token");
+    const endpoint = type === "license" ? "upload-license" : "upload-profilePicture";
+    
+    const res = await axios.post(`${API_BASE_URL}/${endpoint}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      console.log("Uploaded Profile Picture:", res.data); // ✅ Debug response
+    console.log(`✅ Uploaded ${type === "license" ? "License" : "Profile Picture"} Response:`, res.data);
 
-      // Ensure the correct image path is set
-      setCaptain((prev) => ({
-          ...prev,
-          profilePicture: `/uploads/${res.data.profilePicture}`,
-      }));
+    // Check if API response contains the correct path
+    if (!res.data || !res.data[type === "license" ? "licensePicture" : "profilePicture"]) {
+      console.error("❌ API did not return the correct file path!", res.data);
+      return;
+    }
 
+    // ✅ Update state correctly
+    setCaptain((prev) => {
+      const updatedCaptain = {
+        ...prev,
+        [type === "license" ? "license" : "profilePicture"]: `/uploads/${res.data[type === "license" ? "licensePicture" : "profilePicture"]}`,
+      };
+      console.log("✅ Updated Captain State:", updatedCaptain); // Debugging
+      return updatedCaptain;
+    });
+
+    // Close modal
+    if (type === "license") {
+      setShowLicenseModal(false);
+    } else {
       setShowProfileModal(false);
+    }
+
+    // ✅ Force refresh after uploading license
+    if (type === "license") {
+      setTimeout(() => {
+        window.location.reload(); 
+      }, 1000);
+    }
+
   } catch (err) {
-      console.error("Error uploading profile picture:", err);
+    console.error(`❌ Error uploading ${type === "license" ? "license" : "profile picture"}:`, err);
   }
 };
 
@@ -256,10 +283,16 @@ const handleRemovePicture = async () => {
         <i className="ri-file-upload-line text-xl text-primary"></i>
         <span className="ml-3 text-lg font-medium">License</span>
         <img
-          src={captain?.license ? `http://localhost:4000${captain.license}` : defaultLicense}
-          alt="License"
-          className="w-24 h-16 ml-auto object-cover border rounded-md"
-        />
+  src={captain?.license ? `http://localhost:4000${captain.license}?t=${new Date().getTime()}` : defaultLicense}
+  alt="License"
+  className="w-24 h-16 ml-auto object-cover border rounded-md"
+  onError={(e) => { 
+    console.error("Error loading license image:", e.target.src); 
+    e.target.onerror = null; 
+    e.target.src = defaultLicense; 
+  }}
+/>
+
         <button
           onClick={() => setShowLicenseModal(true)}
           className="btn btn-primary ml-4"
@@ -369,12 +402,13 @@ const handleRemovePicture = async () => {
 
     {/* Hidden Input for Gallery */}
     <input
-      type="file"
-      accept="image/*"
-      id="galleryInput"
-      className="hidden"
-      onChange={(e) => handleFileUpload(e.target.files[0])}
-    />
+  type="file"
+  accept="image/*"
+  id="galleryInput"
+  className="hidden"
+  onChange={(e) => handleFileUpload(e.target.files[0], "profile")}
+/>
+
   </div>
 );
 

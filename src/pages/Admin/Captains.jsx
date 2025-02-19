@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function Captains() {
   const [captains, setCaptains] = useState([]);
@@ -44,6 +44,7 @@ export default function Captains() {
             <th className="p-3 border">Vehicle Type</th>
             <th className="p-3 border">Plate</th>
             <th className="p-3 border">Capacity</th>
+            <th className="p-3 border">License</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +60,22 @@ export default function Captains() {
                 <td className="p-3 border">{captain?.vehicle?.vehicleType || "N/A"}</td>
                 <td className="p-3 border">{captain?.vehicle?.plate || "N/A"}</td>
                 <td className="p-3 border">{captain?.vehicle?.capacity || "N/A"}</td>
+                <td className="p-3 border">
+                  {captain.license ? (
+                    <img
+                      src={`http://localhost:4000${captain.license}`}
+                      alt="License"
+                      className="w-24 h-16 object-cover border rounded-md"
+                      onError={(e) => {
+                        console.error("❌ Error loading license image:", e.target.src);
+                        e.target.onerror = null;
+                        e.target.src = "/default-license.jpg"; // Fallback image
+                      }}
+                    />
+                  ) : (
+                    "No License Uploaded"
+                  )}
+                </td>
               </tr>
             ))
           ) : (
