@@ -26,7 +26,17 @@ const PaymentSuccess = () => {
         <i className="ri-check-line text-green-500 text-6xl mb-4"></i>
         <h1 className="text-2xl font-bold text-green-600">Payment Successful!</h1>
         <p className="text-gray-600 mt-2">Thank you for your payment.</p>
-        <p className="text-gray-500 text-sm mt-1">Redirecting to home in <strong>{seconds}</strong> seconds...</p>
+        <p className="text-gray-500 text-sm mt-1">
+          Redirecting to home in <strong>{seconds}</strong> seconds...
+        </p>
+
+        {/* ✅ Skip Button */}
+        <button
+          onClick={() => navigate("/home")}
+          className="mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Skip
+        </button>
       </div>
     </div>
   );

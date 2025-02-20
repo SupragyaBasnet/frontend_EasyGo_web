@@ -1,8 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
+
+
+const socket = io(import.meta.env.VITE_BASE_URL);
 
 const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {
   const [vehicleAvailability, setVehicleAvailability] = useState({
@@ -11,29 +15,40 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
     auto: { time: "Calculating...", riders: "0" },
   });
 
-  useEffect(() => {
-    // Fetch vehicle availability data
-    const fetchVehicleAvailability = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
-
-        console.log("🚀 API Response:", response.data); // ✅ Debug API response
-
-        if (response.status === 200 && response.data) {
-          setVehicleAvailability(response.data);
-        } else {
-          console.error("❌ Invalid API response format:", response.data);
+    useEffect(() => {
+      const fetchVehicleAvailability = async () => {
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          });
+    
+          console.log("🚀 API Response:", response.data); // ✅ Debug API response
+    
+          if (response.status === 200 && response.data) {
+            setVehicleAvailability(response.data);
+          } else {
+            console.error("❌ Invalid API response format:", response.data);
+          }
+        } catch (error) {
+          console.error("❌ Error fetching vehicle availability:", error);
         }
-      } catch (error) {
-        console.error("❌ Error fetching vehicle availability:", error);
-      }
-    };
-
-    fetchVehicleAvailability();
-  }, []);
-
+      };
+    
+      fetchVehicleAvailability();
+    }, []);
+    
+    useEffect(() => {
+      socket.on("vehicle-availability-update", (data) => {
+        console.log("🚀 Received Socket Data:", data); // ✅ Debugging
+        setVehicleAvailability(data);
+      });
+    
+      return () => {
+        socket.off("vehicle-availability-update"); // Cleanup on unmount
+      };
+    }, []);
+    
+    
   return (
     <div className="fixed top-0 left-0 w-full h-full  z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
       {/* Close Button */}

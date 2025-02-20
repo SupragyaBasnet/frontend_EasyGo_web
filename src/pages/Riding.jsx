@@ -125,7 +125,7 @@ const Riding = () => {
             <i className="ri-time-line"></i>
             <div>
               <h3 className="text-lg font-medium">Duration</h3>
-              <p className="text-sm text-gray-600">{duration}</p>
+              <p className="text-sm text-gray-600">{duration} min</p>
             </div>
           </div>
 
@@ -134,7 +134,7 @@ const Riding = () => {
             <i className="ri-pin-distance-fill"></i>
             <div>
               <h3 className="text-lg font-medium">Distance</h3>
-              <p className="text-sm text-gray-600">{distance}</p>
+              <p className="text-sm text-gray-600">{distance} km</p>
             </div>
           </div>
         </div>

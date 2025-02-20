@@ -64,7 +64,7 @@ const FinishRide = (props) => {
               <h2 className="text-lg font-medium">
                 {user?.fullname?.firstname || "Firstname"} {user?.fullname?.lastname || "Lastname"}
               </h2>
-              <p className="text-sm text-gray-600">{user?.phonenumber || "No Contact"}</p>
+              <p className="text-sm text-gray-600">📞 {user?.phonenumber || "No Contact"}</p>
             </div>
           </div>
         </div>
