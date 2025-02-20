@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import defaultAvatar from "../assets/image.jpeg"; // Default avatar
+import defaultAvatar from "../assets/image.jpeg";
 import LiveTracking from "../components/LiveTracking";
 import { SocketContext } from "../context/SocketContext";
 
@@ -8,6 +8,7 @@ const Riding = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { socket } = useContext(SocketContext);
+  console.log(location);
 
   // Ensure ride data is available, else redirect to home
   const ride = location.state?.ride;
@@ -19,7 +20,7 @@ const Riding = () => {
 
   // Extract captain and vehicle details safely
   const captain = ride?.captain || {};
-  const vehicleName = captain?.vehicle?.name || "Unknown Vehicle"; // ✅ Use vehicle name
+  const vehicleName = captain?.vehicle?.name || "Unknown Vehicle";
   const vehiclePlate = captain?.vehicle?.plate || "Unknown Plate";
   const vehicleType = captain?.vehicle?.vehicleType || "Unknown Type";
 
@@ -30,10 +31,11 @@ const Riding = () => {
   const pickup = ride?.pickup || "Unknown Pickup";
   const destination = ride?.destination || "Unknown Destination";
 
-  // Debugging logs to verify data
-  console.log("🚀 Debug: Received ride data:", ride);
-  console.log("🚀 Debug: Captain details:", captain);
-  console.log("🚀 Debug: Vehicle details:", captain?.vehicle);
+  // Handle payment button click
+  const handlePayment = () => {
+    console.log("✅ Payment initiated...");
+    navigate("/payment-success");
+  };
 
   useEffect(() => {
     socket.on("ride-ended", () => {
@@ -85,7 +87,7 @@ const Riding = () => {
             </h2>
             <p className="text-sm text-gray-600">📞 {captain?.phonenumber || "No Contact"}</p>
             <p className="text-sm text-gray-600">Vehicle: {vehicleName} - {vehiclePlate}</p>
-            <p className="text-sm text-gray-500">{vehicleType}</p> {/* ✅ Display vehicle type */}
+            <p className="text-sm text-gray-500">{vehicleType}</p>
           </div>
         </div>
 
@@ -138,7 +140,10 @@ const Riding = () => {
         </div>
 
         {/* Payment Button */}
-        <button className="w-full mt-2 mb-3 bg-green-600 text-white font-semibold p-3 rounded-lg">
+        <button 
+          onClick={handlePayment} 
+          className="w-full mt-2 mb-3 bg-green-600 text-white font-semibold p-3 rounded-lg"
+        >
           Make a Payment
         </button>
       </div>

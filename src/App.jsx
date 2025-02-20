@@ -26,6 +26,7 @@ import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 
 const App = () => {
@@ -61,6 +62,7 @@ const App = () => {
           element={<CaptainSettings setDaisyTheme={setDaisyTheme} />}
         />
 <Route path="/lookingforrider" element={<LookingForDriver />} />
+<Route path="/payment-success" element={<PaymentSuccess />} />
 
 {/* //AdminRoutes */}
 <Route path="/admin_login" element={<AdminLogin />} />  {/* 🔹 Added Admin Login Route */}

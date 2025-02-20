@@ -95,7 +95,7 @@ const WaitingForDriver = (props) => {
       {/* Move to Riding Button */}
       <button
         className="w-full py-3 mt-5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
-        onClick={() => navigate("/riding")}
+        onClick={() => navigate("/riding" , { state: { ride: props.ride }})}
       >
         Go to Riding
       </button>
