@@ -1,9 +1,7 @@
 import axios from "axios";
 import {
   ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement,
-  PointElement,
-  Title,
-  Tooltip
+  PointElement, Title, Tooltip
 } from "chart.js";
 import { useEffect, useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
@@ -11,8 +9,8 @@ import { Bar, Line, Pie } from "react-chartjs-2";
 import { LogOutIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EasyGoLogo from "../../assets/EasyGo.png";
-import Captains from "./Captains"; // ✅ Import Captains Component
-import Passengers from "./Passengers"; // ✅ Import Passengers Component
+import Captains from "./Captains";
+import Passengers from "./Passengers";
 
 ChartJS.register(
   CategoryScale,
@@ -20,111 +18,99 @@ ChartJS.register(
   BarElement,
   LineElement,
   PointElement,
-  ArcElement, // ✅ Ensure ArcElement is registered
+  ArcElement,
   Title,
   Tooltip,
   Legend
 );
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({
-    totalRides: 0,
-    totalFare: 0,
-    totalDistance: 0,
-  });
-
+  const [stats, setStats] = useState({ totalRides: 0, totalFare: 0, totalDistance: 0 });
   const [admin, setAdmin] = useState({ username: "Loading...", email: "Loading..." });
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [activePage, setActivePage] = useState("dashboard"); // ✅ Track which page is active
-  const [selectedChart, setSelectedChart] = useState(null);
+  const [activePage, setActivePage] = useState("dashboard");
+  const [selectedChart, setSelectedChart] = useState("totalRides"); // ✅ Default chart
   const [chartData, setChartData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        // ✅ Check token in cookies
-        const token = document.cookie
+        let token = document.cookie
           .split("; ")
           .find(row => row.startsWith("token="))
           ?.split("=")[1];
-  
+
+        if (!token) {
+          token = localStorage.getItem("adminToken");
+        }
+
         if (!token) {
           console.error("No admin token found. Please log in again.");
           return;
         }
-  
-        console.log("Fetching admin profile...");
+
+        console.log("Using token:", token);
+
         const response = await axios.get("http://localhost:4000/admin/profile", {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
-  
+
         console.log("Admin profile data:", response.data);
         setAdmin(response.data);
       } catch (error) {
         console.error("Error fetching admin profile:", error.response ? error.response.data : error.message);
       }
     };
-  
+
     fetchAdmin();
   }, []);
-  
-  const fetchChartData = async (type) => {
-    console.log(`Fetching ${type} data...`);
-  
-    let endpoint = "";
-    switch (type) {
-      case "totalRides":
-        endpoint = "/admin/total-rides";
-        break;
-      case "totalFare":
-        endpoint = "/admin/total-fare";
-        break;
-      case "totalDistance":
-        endpoint = "/admin/total-distance"; // ✅ Ensure this is correct!
-        break;
-      default:
-        return;
-    }
-  
-    setSelectedChart(type);
-    setChartData(null);
-  
+
+  const fetchChartData = async () => {
+    console.log("Fetching total rides, total fare, and total distance data...");
+
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) {
         console.error("No admin token found. Please log in again.");
         return;
       }
-  
-      const response = await axios.get(`http://localhost:4000${endpoint}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-  
-      console.log(`Fetched ${type} Data:`, response.data);
-  
-      if (response.data.length > 0) {
-        setChartData(response.data);
-      } else {
-        setChartData([]); // Prevents rendering empty datasets
-      }
+
+      const [ridesRes, fareRes, distanceRes] = await Promise.all([
+        axios.get("http://localhost:4000/admin/total-rides", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }),
+        axios.get("http://localhost:4000/admin/total-fare", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }),
+        axios.get("http://localhost:4000/admin/total-distance", {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        }),
+      ]);
+
+      console.log("Total Rides Data:", ridesRes.data);
+      console.log("Total Fare Data:", fareRes.data);
+      console.log("Total Distance Data:", distanceRes.data);
+
+      const totalRides = ridesRes.data.reduce((sum, ride) => sum + ride.count, 0);
+      const totalFare = fareRes.data.reduce((sum, fare) => sum + fare.amount, 0);
+      const totalDistance = distanceRes.data.reduce((sum, dist) => sum + dist.distance, 0);
+
+      setStats({ totalRides, totalFare, totalDistance });
+      setChartData({ rides: ridesRes.data, fare: fareRes.data, distance: distanceRes.data });
     } catch (error) {
-      console.error(`Error fetching ${type} data:`, error);
-      setChartData([]);
+      console.error("❌ Error fetching statistics:", error.message);
     }
   };
-  
-  
-  const handleLogout = async () => {
-    try {
-      await axios.get("http://localhost:4000/admin/logout", { withCredentials: true });
-      navigate("/admin_login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+
+  useEffect(() => {
+    fetchChartData();
+  }, []);
+
 
   return (
     <div className="flex h-screen">
@@ -134,39 +120,24 @@ export default function Dashboard() {
           <h2 className="text-xl font-bold mb-6">EasyGo Admin</h2>
           <nav>
             <ul>
-              <li className="mb-2">
-                <button 
-                  onClick={() => setActivePage("dashboard")} 
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
-                    activePage === "dashboard" ? "bg-gray-700" : "hover:bg-gray-700"
-                  }`}
-                >
+            <li className="mb-2">
+                <button onClick={() => setActivePage("dashboard")}
+                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "dashboard" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
                   📊 <span>Dashboard</span>
                 </button>
               </li>
               <li className="mb-2">
-                <button 
-                  onClick={() => setActivePage("passengers")} 
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
-                    activePage === "passengers" ? "bg-gray-700" : "hover:bg-gray-700"
-                  }`}
-                >
+                <button onClick={() => setActivePage("passengers")}
+                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "passengers" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
                   👥 <span>Passengers</span>
                 </button>
               </li>
               <li className="mb-2">
-  <button 
-    onClick={() => {
-      console.log("Switching to Captains Page"); // Debug log
-      setActivePage("captains");
-    }} 
-    className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
-      activePage === "captains" ? "bg-gray-700" : "hover:bg-gray-700"
-    }`}
-  >
-    🚖 <span>Captains</span>
-  </button>
-</li>
+                <button onClick={() => setActivePage("captains")}
+                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "captains" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
+                  🚖 <span>Captains</span>
+                </button>
+              </li>
 
             </ul>
           </nav>
@@ -216,7 +187,7 @@ export default function Dashboard() {
     }}
   >
     <h2 className="text-lg">Total Fare Earned</h2>
-    <p className="text-2xl font-bold">Rs. {stats.totalFare}</p>
+    <p className="text-2xl font-bold">Rs. {stats.totalFare.toFixed(2)}</p>
   </div>
   
   <div 
@@ -227,7 +198,7 @@ export default function Dashboard() {
     }}
   >
     <h2 className="text-lg">Total Distance Covered</h2>
-    <p className="text-2xl font-bold">{stats.totalDistance} km</p>
+    <p className="text-2xl font-bold">{stats.totalDistance.toFixed(2)} km</p>
   </div>
 </div>
 

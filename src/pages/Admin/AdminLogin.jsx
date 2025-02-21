@@ -21,12 +21,6 @@ export default function AdminLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
-    if (!email || !password) {
-      alert("Please enter your email and password.");
-      return;
-    }
-  
     try {
       const response = await axios.post("http://localhost:4000/admin/login", { 
         email, 
@@ -34,14 +28,16 @@ export default function AdminLogin() {
         password 
       }, { withCredentials: true });
   
-      // ✅ Store token in localStorage
+      console.log("Login Response:", response.data); // ✅ Debugging Log
       localStorage.setItem("adminToken", response.data.token);
   
-      navigate("/dashboard"); // Redirect to Dashboard after login
+      navigate("/dashboard");
     } catch (error) {
+      console.error("Login Error:", error.response ? error.response.data : error.message);
       alert("Invalid credentials");
     }
   };
+  
   
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
