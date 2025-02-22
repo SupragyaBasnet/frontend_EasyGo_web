@@ -26,49 +26,22 @@ const CaptainHome = () => {
   const navigate = useNavigate(); // Added this line
 
 
-
-  // useEffect(() => {
-  //   if (captain) {
-      
-
-  //     const updateLocation = () => {
-  //       if (navigator.geolocation) {
-  //         navigator.geolocation.getCurrentPosition((position) => {
-  //           socket.emit("update-location-captain", {
-  //             userId: captain._id,
-  //             location: {
-  //               lat: position.coords.latitude,
-  //               lng: position.coords.longitude,
-  //             },
-  //           });
-  //         });
-  //       }
-  //     };
-
-  //     const locationInterval = setInterval(updateLocation, 10000);
-  //     updateLocation();
-
-  //     return () => clearInterval(locationInterval);
-  //   }
-  // }, [captain, socket]);
-
-
   const updateLocation = () => {
     if (!navigator.geolocation) {
-      console.warn("❌ Geolocation is not supported by this browser.");
+      console.warn(" Geolocation is not supported by this browser.");
       return;
     }
   
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log("captain id", captain._id);
-        console.log("📍 Updating location...", position.coords);
+        console.log(" Updating location...", position.coords);
   
         socket.emit("join", {
           userId: captain._id || "default-id",
           userType: "captain",
         });
-        // ✅ Emit location update to backend
+        // Emit location update to backend
         socket.emit("update-location-captain", {
           userId: captain._id,
           location: {
@@ -80,32 +53,32 @@ const CaptainHome = () => {
       (error) => {
         switch (error.code) {
           case 1:
-            console.error("❌ Location permission denied. Enable it in browser settings.");
+            console.error("Location permission denied. Enable it in browser settings.");
             alert("Please enable location permissions.");
             break;
           case 2:
-            console.error("❌ Location unavailable. Ensure GPS is ON & retrying in 5 seconds...");
-            setTimeout(updateLocation, 5000); // ✅ Retry after 5 seconds
+            console.error(" Location unavailable. Ensure GPS is ON & retrying in 5 seconds...");
+            setTimeout(updateLocation, 5000); //  Retry after 5 seconds
             break;
           case 3:
-            console.error("❌ Location request timed out. Retrying in 3 seconds...");
-            setTimeout(updateLocation, 3000); // ✅ Retry quickly
+            console.error(" Location request timed out. Retrying in 3 seconds...");
+            setTimeout(updateLocation, 3000); //  Retry quickly
             break;
           default:
-            console.error("❌ Unknown geolocation error:", error);
+            console.error("Unknown geolocation error:", error);
         }
       },
       {
-        enableHighAccuracy: true, // ✅ Use GPS for better accuracy
-        timeout: 30000, // ✅ Increased timeout (30s)
-        maximumAge: 5000, // ✅ Allow recent location to be used
+        enableHighAccuracy: true, // Use GPS for better accuracy
+        timeout: 30000, //  Increased timeout (30s)
+        maximumAge: 5000, // Allow recent location to be used
       }
     );
   };
   
-  // ✅ Automatically update location every 10 seconds
+  // Automatically update location every 10 seconds
   const locationInterval = setInterval(updateLocation, 10000);
-  updateLocation(); // ✅ Run once immediately
+  updateLocation(); //  Run once immediately
   
   
   useEffect(() => {
@@ -227,20 +200,6 @@ const CaptainHome = () => {
   </div>
 )}
 
-
-
-{/* <div
-  ref={confirmRidePopupPanelRef}
-  className={`fixed inset-0 w-full h-full z-[100] bg-white px-3 py-6 shadow-lg transition-transform ${
-    confirmRidePopupPanel ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
-  }`}
->
-  <ConfirmRidePopUp
-    ride={ride} // Replace with actual ride data
-    setConfirmRidePopupPanel={setConfirmRidePopupPanel}
-    setRidePopupPanel={setRidePopupPanel}
-  />
-</div> */}
 <div
   ref={confirmRidePopupPanelRef}
   className={`fixed inset-0 w-full h-full z-[100] bg-white px-3 py-6 shadow-lg transition-transform ${
@@ -249,7 +208,7 @@ const CaptainHome = () => {
 >
   {confirmRidePopupPanel && (
     <ConfirmRidePopUp
-      ride={ride} // ✅ Ensures ride data is passed correctly
+      ride={ride} //  Ensures ride data is passed correctly
       setConfirmRidePopupPanel={setConfirmRidePopupPanel}
       setRidePopupPanel={setRidePopupPanel}
     />
