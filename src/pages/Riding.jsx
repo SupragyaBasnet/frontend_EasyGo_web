@@ -13,7 +13,7 @@ const Riding = () => {
   // Ensure ride data is available, else redirect to home
   const ride = location.state?.ride;
   if (!ride) {
-    console.error("❌ Error: No ride data found in location.state");
+    console.error("Error: No ride data found in location.state");
     navigate("/home");
     return null;
   }
@@ -33,7 +33,7 @@ const Riding = () => {
 
   // Handle payment button click
   const handlePayment = () => {
-    console.log("✅ Payment initiated...");
+    console.log("Payment initiated...");
     navigate("/payment-success");
   };
 
