@@ -127,28 +127,6 @@ const Home = () => {
     handlePanelState(); // Correct function name
   }, [vehiclePanel, confirmRidePanel, vehicleFound, waitingForDriver]);
   
-  // const handlePickupChange = async (e) => {
-
-  //   setPickup(e.target.value);
-  //   console.log('pickup updated');
-  //   if (errors.pickup) {
-  //     setErrors((prevErrors) => ({ ...prevErrors, pickup: false }));
-  //   }
-  //   try {
-  //     const response = await axios.get(
-  //       `${import.meta.env.VITE_BASE_URL}/maps/get-suggestions`,
-  //       {
-  //         params: { input: e.target.value },
-  //         headers: {
-  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //         },
-  //       }
-  //     );
-  //     setPickupSuggestions(response.data);
-  //   } catch {
-  //     // handle error
-  //   }
-  // };
 
   const handlePickupChange = (e) => {
     const input = e.target.value;
@@ -355,22 +333,7 @@ const Home = () => {
   // Call the actual findTrip function
   findTrip();
 };
-  // async function findTrip() {
-  //   setVehiclePanel(true);
-  //   setPanelOpen(false);
 
-  //   const response = await axios.get(
-  //     `${import.meta.env.VITE_BASE_URL}/rides/get-fare`,
-  //     {
-  //       params: { pickup, destination },
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //       },
-  //     }
-  //   );
-
-  //   setFare(response.data);
-  // }
 
   async function createRide() {
     console.log("clientside create ride called");
@@ -393,8 +356,7 @@ const Home = () => {
         setRide(response.data); // Store ride details
         setVehicleFound(true); // Show "Looking for Driver" screen
   
-        // Emit ride request to captains
-        // socket.emit("new-ride", response.data);
+       
       }
     } catch (error) {
       console.error("Error creating ride:", error);

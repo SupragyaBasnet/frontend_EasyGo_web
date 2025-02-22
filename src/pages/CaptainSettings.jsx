@@ -35,18 +35,18 @@ const CaptainSettings = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
   
-      console.log("✅ Fetched Captain Profile:", res.data.captain); // Debug API response
+      console.log("Fetched Captain Profile:", res.data.captain); // Debug API response
   
       if (res.data.captain) {
         setCaptain(res.data.captain);
         setTheme(res.data.captain.theme || "light");
         document.documentElement.setAttribute("data-theme", res.data.captain.theme || "light");
   
-        console.log("✅ Updated State After Fetch:", res.data.captain);
+        console.log("Updated State After Fetch:", res.data.captain);
       }
   
     } catch (err) {
-      console.error("❌ Error fetching captain profile:", err);
+      console.error("Error fetching captain profile:", err);
     }
   };
   
@@ -68,21 +68,21 @@ const handleFileUpload = async (file, type) => {
       },
     });
 
-    console.log(`✅ Uploaded ${type === "license" ? "License" : "Profile Picture"} Response:`, res.data);
+    console.log(`Uploaded ${type === "license" ? "License" : "Profile Picture"} Response:`, res.data);
 
     // Check if API response contains the correct path
     if (!res.data || !res.data[type === "license" ? "licensePicture" : "profilePicture"]) {
-      console.error("❌ API did not return the correct file path!", res.data);
+      console.error(" API did not return the correct file path!", res.data);
       return;
     }
 
-    // ✅ Update state correctly
+    // Update state correctly
     setCaptain((prev) => {
       const updatedCaptain = {
         ...prev,
         [type === "license" ? "license" : "profilePicture"]: `/uploads/${res.data[type === "license" ? "licensePicture" : "profilePicture"]}`,
       };
-      console.log("✅ Updated Captain State:", updatedCaptain); // Debugging
+      console.log("Updated Captain State:", updatedCaptain); // Debugging
       return updatedCaptain;
     });
 
@@ -93,7 +93,7 @@ const handleFileUpload = async (file, type) => {
       setShowProfileModal(false);
     }
 
-    // ✅ Force refresh after uploading license
+    // Force refresh after uploading license
     if (type === "license") {
       setTimeout(() => {
         window.location.reload(); 
@@ -101,7 +101,7 @@ const handleFileUpload = async (file, type) => {
     }
 
   } catch (err) {
-    console.error(`❌ Error uploading ${type === "license" ? "license" : "profile picture"}:`, err);
+    console.error(`Error uploading ${type === "license" ? "license" : "profile picture"}:`, err);
   }
 };
 
@@ -116,7 +116,7 @@ const handleRemovePicture = async () => {
           headers: { Authorization: `Bearer ${token}` },
       });
 
-      // ✅ Immediately update state to remove image
+      // Immediately update state to remove image
       setCaptain((prev) => ({ ...prev, profilePicture: "" })); // Use empty string
 
       console.log("Profile picture removed successfully!");
