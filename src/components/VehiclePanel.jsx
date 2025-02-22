@@ -22,15 +22,15 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           });
     
-          console.log("🚀 API Response:", response.data); // ✅ Debug API response
+          console.log(" API Response:", response.data); // Debug API response
     
           if (response.status === 200 && response.data) {
             setVehicleAvailability(response.data);
           } else {
-            console.error("❌ Invalid API response format:", response.data);
+            console.error(" Invalid API response format:", response.data);
           }
         } catch (error) {
-          console.error("❌ Error fetching vehicle availability:", error);
+          console.error(" Error fetching vehicle availability:", error);
         }
       };
     
@@ -39,7 +39,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
     
     useEffect(() => {
       socket.on("vehicle-availability-update", (data) => {
-        console.log("🚀 Received Socket Data:", data); // ✅ Debugging
+        console.log(" Received Socket Data:", data); //  Debugging
         setVehicleAvailability(data);
       });
     
@@ -64,7 +64,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         Choose a Vehicle
       </h3>
 
-      {/* 🚗 Car Option */}
+      {/*  Car Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);

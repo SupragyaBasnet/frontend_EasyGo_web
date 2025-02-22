@@ -3,10 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import LookingForDriver from "./components/LookingForDriver";
 // import RiderList from "./components/RiderList";
 import React, { useEffect, useState } from "react"; // ✅ Fix: Imported useState & useEffect
-import AdminLogin from "./pages/Admin/AdminLogin";
-import Captains from "./pages/Admin/Captains";
-import Dashboard from "./pages/Admin/Dashboard";
-import Passengers from "./pages/Admin/Passengers";
+import AdminLogin from "./Admin/AdminLogin";
+import Captains from "./Admin/Captains";
+import Dashboard from "./Admin/Dashboard";
+import Passengers from "./Admin/Passengers";
 import Affordable from "./pages/Affordable";
 import CaptainHome from "./pages/CaptainHome";
 import CaptainLogin from "./pages/CaptainLogin";
@@ -27,6 +27,7 @@ import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import FinishedRides from "./Admin/FinishedRides";
 
 
 const App = () => {
@@ -69,6 +70,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin/passengers" element={<Passengers />} />
         <Route path="/admin/captains" element={<Captains />} />
+        <Route path="/admin/finished-rides" element={<FinishedRides />} />
 
 
 

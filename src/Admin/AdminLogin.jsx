@@ -7,7 +7,7 @@ import axios from "axios";
 import { EyeIcon, EyeOffIcon } from "lucide-react"; // Import icons
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import EasyGoLogo from "../../assets/EasyGo.png"; // Import the logo
+import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
 
 

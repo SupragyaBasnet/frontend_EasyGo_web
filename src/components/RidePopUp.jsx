@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 const RidePopUp = (props) => {
   const navigate = useNavigate();
-  const ride = props.ride || {}; // ✅ Ensure ride is always an object
-  const user = ride?.user || {}; // ✅ Extract user data safely
+  const ride = props.ride || {}; //  Ensure ride is always an object
+  const user = ride?.user || {}; //  Extract user data safely
   const distance = ride?.distance || "Calculating...";
   const duration = ride?.duration || "Calculating...";
   const fare = ride?.fare || "Calculating...";
@@ -82,9 +82,9 @@ const RidePopUp = (props) => {
           </button> */}
           <button
   onClick={() => {
-    console.log("🚀 Accept button clicked!"); // ✅ Debug log
-    props.setConfirmRidePopupPanel(true); // ✅ Show ConfirmRidePopUp
-    props.confirmRide(props.ride); // ✅ Pass ride data
+    console.log("🚀 Accept button clicked!"); //  Debug log
+    props.setConfirmRidePopupPanel(true); //  Show ConfirmRidePopUp
+    props.confirmRide(props.ride); // Pass ride data
    navigate("/captain-riding", { state: { ride: props.ride } });
 
   }}

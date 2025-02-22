@@ -4,13 +4,15 @@ import {
   PointElement, Title, Tooltip
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 
 import { LogOutIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import EasyGoLogo from "../../assets/EasyGo.png";
+import EasyGoLogo from "../assets/EasyGo.png";
 import Captains from "./Captains";
+import FinishedRides from "./FinishedRides";
 import Passengers from "./Passengers";
+
 
 ChartJS.register(
   CategoryScale,
@@ -30,7 +32,7 @@ export default function Dashboard() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
   const [selectedChart, setSelectedChart] = useState("totalRides"); // ✅ Default chart
-  const [chartData, setChartData] = useState(null);
+  const [chartData, setChartData] = useState({ rides: [], fare: [], distance: [] }); // ✅ Store different stats
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -92,20 +94,28 @@ export default function Dashboard() {
         }),
       ]);
 
-      console.log("Total Rides Data:", ridesRes.data);
-      console.log("Total Fare Data:", fareRes.data);
-      console.log("Total Distance Data:", distanceRes.data);
+      console.log("🚀 API Response - Total Rides:", ridesRes.data);
+      console.log("🚀 API Response - Total Fare:", fareRes.data);
+      console.log("🚀 API Response - Total Distance:", distanceRes.data);
 
-      const totalRides = ridesRes.data.reduce((sum, ride) => sum + ride.count, 0);
-      const totalFare = fareRes.data.reduce((sum, fare) => sum + fare.amount, 0);
-      const totalDistance = distanceRes.data.reduce((sum, dist) => sum + dist.distance, 0);
+      if (!ridesRes.data.length || !fareRes.data.length || !distanceRes.data.length) {
+        console.warn("⚠️ Some data arrays are empty!");
+      }
+
+      const totalRides = ridesRes.data.reduce((sum, ride) => sum + (ride.count || 0), 0);
+      const totalFare = fareRes.data.reduce((sum, fare) => sum + (fare.amount || 0), 0);
+      const totalDistance = distanceRes.data.reduce((sum, dist) => sum + (dist.distance || 0), 0);
 
       setStats({ totalRides, totalFare, totalDistance });
       setChartData({ rides: ridesRes.data, fare: fareRes.data, distance: distanceRes.data });
+
+      console.log("✅ Updated Chart Data:", { rides: ridesRes.data, fare: fareRes.data, distance: distanceRes.data });
+
     } catch (error) {
       console.error("❌ Error fetching statistics:", error.message);
     }
-  };
+};
+
 
   useEffect(() => {
     fetchChartData();
@@ -136,6 +146,12 @@ export default function Dashboard() {
                 <button onClick={() => setActivePage("captains")}
                   className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "captains" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
                   🚖 <span>Captains</span>
+                </button>
+              </li>
+              <li className="mb-2">
+                <button onClick={() => setActivePage("finishedRides")}
+                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "finishedRides" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
+                  ✅ <span>Finished Rides</span>
                 </button>
               </li>
 
@@ -172,7 +188,7 @@ export default function Dashboard() {
     className="bg-blue-500 text-white p-6 rounded-lg shadow cursor-pointer" 
     onClick={() => {
       console.log("Total Rides clicked!");
-      fetchChartData("totalRides");
+      setSelectedChart("totalRides")
     }}
   >
     <h2 className="text-lg">Total Rides</h2>
@@ -183,7 +199,7 @@ export default function Dashboard() {
     className="bg-green-500 text-white p-6 rounded-lg shadow cursor-pointer" 
     onClick={() => {
       console.log("Total Fare clicked!");
-      fetchChartData("totalFare");
+      setSelectedChart("totalFare");
     }}
   >
     <h2 className="text-lg">Total Fare Earned</h2>
@@ -194,7 +210,7 @@ export default function Dashboard() {
     className="bg-purple-500 text-white p-6 rounded-lg shadow cursor-pointer" 
     onClick={() => {
       console.log("Total Distance clicked!");
-      fetchChartData("totalDistance");
+      setSelectedChart("totalDistance");
     }}
   >
     <h2 className="text-lg">Total Distance Covered</h2>
@@ -205,77 +221,47 @@ export default function Dashboard() {
   </>
 )}
 {/* 📊 Render Charts - BELOW Total Rides, Fare, Distance */}
-{activePage === "dashboard" && selectedChart && (
+{activePage === "dashboard" && chartData  && (
   <div className="w-full mt-6 bg-white p-6 rounded-lg shadow">
     <h2 className="text-lg font-semibold mb-4">Statistics Chart</h2>
-    {chartData && chartData.length > 0 ? (
+    {chartData && (chartData.rides.length || chartData.fare.length || chartData.distance.length) ? (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* ✅ Total Rides Chart */}
-        {selectedChart === "totalRides" && (
-          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
-            <Line
-              data={{
-                labels: chartData.map((d) => d._id || "Unknown Date"), // ✅ Handle missing labels
-                datasets: [
-                  {
-                    label: "Total Rides",
-                    data: chartData.map((d) => d.count || 0), // ✅ Handle missing values
-                    borderColor: "blue",
-                    fill: false,
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false, // ✅ Prevents chart from stretching
-              }}
-            />
-          </div>
-        )}
 
-        {/* ✅ Total Fare Chart */}
-        {selectedChart === "totalFare" && (
-          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
-            <Bar
-              data={{
-                labels: chartData.map((d) => d._id || "Unknown Date"), // ✅ Handle missing labels
-                datasets: [
-                  {
-                    label: "Total Fare Earned",
-                    data: chartData.map((d) => d.amount || 0), // ✅ Handle missing values
-                    backgroundColor: "green",
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false, // ✅ Prevents chart from stretching
-              }}
-            />
-          </div>
-        )}
+{selectedChart === "totalRides" && (
+  <Line
+    data={{
+      labels: chartData.rides.length ? chartData.rides.map(d => d._id || "Unknown") : ["No Data"],
+      datasets: [{ label: "Total Rides", data: chartData.rides.length ? chartData.rides.map(d => d.count || 0) : [0], borderColor: "blue" }]
+    }}
+    options={{ responsive: true }}
+  />
+)}
 
-        {/* ✅ Total Distance Chart (Pie) */}
-        {selectedChart === "totalDistance" && (
-          <div className="w-full h-80 bg-white p-4 rounded-lg shadow">
-            <Pie
-              data={{
-                labels: chartData.map((d) => d._id || "Unknown Vehicle"), // ✅ Handle missing vehicle types
-                datasets: [
-                  {
-                    label: "Total Distance Covered",
-                    data: chartData.map((d) => d.distance || 0), // ✅ Handle missing distances
-                    backgroundColor: ["#36A2EB", "#FF6384", "#FFCE56"], // ✅ More readable colors
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false, // ✅ Prevents chart from stretching
-              }}
-            />
-          </div>
-        )}
+{selectedChart === "totalFare" && (
+  <Bar
+    data={{
+      labels: chartData.fare.length ? chartData.fare.map(d => d._id || "Unknown") : ["No Data"],
+      datasets: [{ label: "Total Fare Earned", data: chartData.fare.length ? chartData.fare.map(d => d.amount || 0) : [0], backgroundColor: "green" }]
+    }}
+    options={{ responsive: true }}
+  />
+)}
+
+{selectedChart === "totalDistance" && (
+  <Bar
+    data={{
+      labels: chartData.distance.length ? chartData.distance.map(d => d._id || "Unknown") : ["No Data"],
+      datasets: [{ 
+        label: "Total Distance Covered", 
+        data: chartData.distance.length ? chartData.distance.map(d => d.distance || 0) : [0], 
+        backgroundColor: "#10B981"
+      }]
+    }}
+    options={{ responsive: true }}
+  />
+)}
+
+
       </div>
     ) : (
       <div className="text-center text-gray-500 py-10 border-t border-gray-200">
@@ -309,6 +295,8 @@ export default function Dashboard() {
         >
           No
         </button>
+
+        {activePage === "finishedRides" && <FinishedRides />}
       </div>
     </div>
   </div>

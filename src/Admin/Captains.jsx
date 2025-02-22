@@ -7,7 +7,7 @@ export default function Captains() {
   useEffect(() => {
     const fetchCaptains = async () => {
       try {
-        const token = localStorage.getItem("adminToken"); // ✅ Get token from localStorage
+        const token = localStorage.getItem("adminToken"); //  Get token from localStorage
     
         if (!token) {
           console.error("No admin token found. Please log in again.");
