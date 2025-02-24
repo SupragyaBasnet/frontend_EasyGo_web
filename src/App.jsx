@@ -27,7 +27,7 @@ import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
 import PaymentSuccess from "./pages/PaymentSuccess";
-import FinishedRides from "./Admin/FinishedRides";
+
 
 
 const App = () => {
@@ -70,7 +70,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin/passengers" element={<Passengers />} />
         <Route path="/admin/captains" element={<Captains />} />
-        <Route path="/admin/finished-rides" element={<FinishedRides />} />
+  
 
 
 

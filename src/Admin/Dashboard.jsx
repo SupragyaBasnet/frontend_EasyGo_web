@@ -4,15 +4,12 @@ import {
   PointElement, Title, Tooltip
 } from "chart.js";
 import { useEffect, useState } from "react";
-import { Bar, Line } from "react-chartjs-2";
-
-import { LogOutIcon } from "lucide-react";
+import { Bar, Pie } from "react-chartjs-2";
+import { LogOut, Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png";
 import Captains from "./Captains";
-import FinishedRides from "./FinishedRides";
 import Passengers from "./Passengers";
-
 
 ChartJS.register(
   CategoryScale,
@@ -31,38 +28,27 @@ export default function Dashboard() {
   const [admin, setAdmin] = useState({ username: "Loading...", email: "Loading..." });
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
-  const [selectedChart, setSelectedChart] = useState("totalRides"); // ✅ Default chart
-  const [chartData, setChartData] = useState({ rides: [], fare: [], distance: [] }); // ✅ Store different stats
+  const [chartData, setChartData] = useState({ rides: [], fare: [], distance: [] });
   const navigate = useNavigate();
+  const [showSidebar, setShowSidebar] = useState(false);
 
   useEffect(() => {
     const fetchAdmin = async () => {
       try {
-        let token = document.cookie
-          .split("; ")
-          .find(row => row.startsWith("token="))
-          ?.split("=")[1];
-
+        const token = localStorage.getItem("adminToken");
         if (!token) {
-          token = localStorage.getItem("adminToken");
-        }
-
-        if (!token) {
-          console.error("No admin token found. Please log in again.");
+          console.error("No admin token found.");
           return;
         }
-
-        console.log("Using token:", token);
 
         const response = await axios.get("http://localhost:4000/admin/profile", {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
 
-        console.log("Admin profile data:", response.data);
         setAdmin(response.data);
       } catch (error) {
-        console.error("Error fetching admin profile:", error.response ? error.response.data : error.message);
+        console.error("Error fetching admin profile:", error.message);
       }
     };
 
@@ -70,37 +56,18 @@ export default function Dashboard() {
   }, []);
 
   const fetchChartData = async () => {
-    console.log("Fetching total rides, total fare, and total distance data...");
-
     try {
       const token = localStorage.getItem("adminToken");
       if (!token) {
-        console.error("No admin token found. Please log in again.");
+        console.error("No admin token found.");
         return;
       }
 
       const [ridesRes, fareRes, distanceRes] = await Promise.all([
-        axios.get("http://localhost:4000/admin/total-rides", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }),
-        axios.get("http://localhost:4000/admin/total-fare", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }),
-        axios.get("http://localhost:4000/admin/total-distance", {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }),
+        axios.get("http://localhost:4000/admin/total-rides", { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get("http://localhost:4000/admin/total-fare", { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get("http://localhost:4000/admin/total-distance", { headers: { Authorization: `Bearer ${token}` } }),
       ]);
-
-      console.log("🚀 API Response - Total Rides:", ridesRes.data);
-      console.log("🚀 API Response - Total Fare:", fareRes.data);
-      console.log("🚀 API Response - Total Distance:", distanceRes.data);
-
-      if (!ridesRes.data.length || !fareRes.data.length || !distanceRes.data.length) {
-        console.warn("⚠️ Some data arrays are empty!");
-      }
 
       const totalRides = ridesRes.data.reduce((sum, ride) => sum + (ride.count || 0), 0);
       const totalFare = fareRes.data.reduce((sum, fare) => sum + (fare.amount || 0), 0);
@@ -108,173 +75,155 @@ export default function Dashboard() {
 
       setStats({ totalRides, totalFare, totalDistance });
       setChartData({ rides: ridesRes.data, fare: fareRes.data, distance: distanceRes.data });
-
-      console.log("✅ Updated Chart Data:", { rides: ridesRes.data, fare: fareRes.data, distance: distanceRes.data });
-
     } catch (error) {
-      console.error("❌ Error fetching statistics:", error.message);
+      console.error("Error fetching statistics:", error.message);
     }
-};
-
+  };
 
   useEffect(() => {
     fetchChartData();
   }, []);
 
-
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
-      <div className="w-64 bg-gray-800 text-white p-5 flex flex-col justify-between">
-        <div>
-          <h2 className="text-xl font-bold mb-6">EasyGo Admin</h2>
-          <nav>
-            <ul>
+    {/* Mobile Sidebar Toggle */}
+    <button 
+      className="fixed top-4 left-4 md:hidden bg-gray-800 text-white p-2 rounded-lg z-50"
+      onClick={() => setShowSidebar(!showSidebar)}
+    >
+      <MenuIcon size={24} />
+    </button>
+
+    {/* Sidebar */}
+    <div 
+      className={`fixed md:static inset-y-0 left-0 w-64 bg-gray-800 text-white p-5 flex flex-col justify-between transition-transform duration-300 ${
+        showSidebar ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      }`}
+    >
+      <div>
+        <h2 className="text-xl font-bold mb-6">EasyGo Admin</h2>
+        <nav>
+          <ul>
             <li className="mb-2">
-                <button onClick={() => setActivePage("dashboard")}
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "dashboard" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                  📊 <span>Dashboard</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button onClick={() => setActivePage("passengers")}
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "passengers" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                  👥 <span>Passengers</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button onClick={() => setActivePage("captains")}
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "captains" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                  🚖 <span>Captains</span>
-                </button>
-              </li>
-              <li className="mb-2">
-                <button onClick={() => setActivePage("finishedRides")}
-                  className={`flex items-center space-x-2 p-3 rounded-lg w-full ${activePage === "finishedRides" ? "bg-gray-700" : "hover:bg-gray-700"}`}>
-                  ✅ <span>Finished Rides</span>
-                </button>
-              </li>
-
-            </ul>
-          </nav>
-        </div>
-
-        {/* LOGOUT BUTTON */}
-        <button
-          onClick={() => setShowLogoutModal(true)}
-          className="flex items-center space-x-2 p-3 rounded-lg w-full bg-red-500 hover:bg-red-600"
-        >
-          <LogOutIcon size={20} />
-          <span>Logout</span>
-        </button>
+              <button onClick={() => setActivePage("dashboard")}
+                className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
+                  activePage === "dashboard" ? "bg-gray-700" : "hover:bg-gray-700"
+                }`}
+              >
+                📊 <span>Dashboard</span>
+              </button>
+            </li>
+            <li className="mb-2">
+              <button onClick={() => setActivePage("passengers")}
+                className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
+                  activePage === "passengers" ? "bg-gray-700" : "hover:bg-gray-700"
+                }`}
+              >
+                👥 <span>Passengers</span>
+              </button>
+            </li>  
+            <li className="mb-2">
+              <button onClick={() => setActivePage("captains")}
+                className={`flex items-center space-x-2 p-3 rounded-lg w-full ${
+                  activePage === "captains" ? "bg-gray-700" : "hover:bg-gray-700"
+                }`}
+              >
+                🚖 <span>Captains</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        {/* Top Navbar */}
-        <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
-          <div className="text-gray-700">
-            <p className="text-sm font-semibold">{admin.username}</p>
-            <p className="text-xs text-gray-500">{admin.email}</p>
+      {/* Logout Button */}
+      <button className="flex items-center space-x-2 p-3 rounded-lg w-full bg-red-500 hover:bg-red-600">
+        <LogOut size={20} />
+        <span>Logout</span>
+      </button>
+    </div>
+
+    {/* Main Content */}
+    <div className="flex-1 p-6 md:p-8">
+      {/* Top Navbar */}
+      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-lg shadow">
+        <div className="text-gray-700">
+          <p className="text-sm font-semibold">{admin.username}</p>
+          <p className="text-xs text-gray-500">{admin.email}</p>
+        </div>
+        <img src={EasyGoLogo} alt="EasyGo Logo" className="h-12 w-12 rounded-full border-2 shadow-lg" />
+      </div>
+
+      {/* Dashboard Section */}
+      {activePage === "dashboard" && (
+        <>
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-500 text-white p-6 rounded-lg shadow text-center">
+              <h2 className="text-lg">Total Rides</h2>
+              <p className="text-2xl font-bold">{stats.totalRides}</p>
+            </div>
+            <div className="bg-green-500 text-white p-6 rounded-lg shadow text-center">
+              <h2 className="text-lg">Total Fare Earned</h2>
+              <p className="text-2xl font-bold">Rs. {stats.totalFare.toFixed(2)}</p>
+            </div>
+            <div className="bg-purple-500 text-white p-6 rounded-lg shadow text-center">
+              <h2 className="text-lg">Total Distance Covered</h2>
+              <p className="text-2xl font-bold">{stats.totalDistance.toFixed(2)} km</p>
+            </div>
           </div>
-          <img src={EasyGoLogo} alt="EasyGo Logo" className="h-12 w-12 rounded-full border-2 border-gray-300 shadow-lg" />
-        </div>
 
-        {/* Conditionally Render Content */}
-        {activePage === "dashboard" && (
-  <>
-<div className="grid grid-cols-3 gap-4 mb-6">
-  <div 
-    className="bg-blue-500 text-white p-6 rounded-lg shadow cursor-pointer" 
-    onClick={() => {
-      console.log("Total Rides clicked!");
-      setSelectedChart("totalRides")
-    }}
-  >
-    <h2 className="text-lg">Total Rides</h2>
-    <p className="text-2xl font-bold">{stats.totalRides}</p>
-  </div>
-  
-  <div 
-    className="bg-green-500 text-white p-6 rounded-lg shadow cursor-pointer" 
-    onClick={() => {
-      console.log("Total Fare clicked!");
-      setSelectedChart("totalFare");
-    }}
-  >
-    <h2 className="text-lg">Total Fare Earned</h2>
-    <p className="text-2xl font-bold">Rs. {stats.totalFare.toFixed(2)}</p>
-  </div>
-  
-  <div 
-    className="bg-purple-500 text-white p-6 rounded-lg shadow cursor-pointer" 
-    onClick={() => {
-      console.log("Total Distance clicked!");
-      setSelectedChart("totalDistance");
-    }}
-  >
-    <h2 className="text-lg">Total Distance Covered</h2>
-    <p className="text-2xl font-bold">{stats.totalDistance.toFixed(2)} km</p>
-  </div>
-</div>
+          {/* Charts Section (Bar & Pie side by side) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[430px]">
+            {/* Bar Chart */}
+            <div className="bg-white p-6 rounded-lg shadow flex flex-col h-full">
+              <h2 className="text-lg font-semibold mb-4 text-center">Monthly Statistics</h2>
+              <div className="flex-1">
+                <Bar
+                  data={{
+                    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                    datasets: [
+                      { label: "Total Rides", data: chartData.rides.map(d => d.count || 0), backgroundColor: "blue" },
+                      { label: "Total Fare Earned", data: chartData.fare.map(d => d.amount || 0), backgroundColor: "green" },
+                      { label: "Total Distance Covered", data: chartData.distance.map(d => d.distance || 0), backgroundColor: "purple" },
+                    ],
+                  }}
+                  options={{ responsive: true, maintainAspectRatio: false }}
+                />
+              </div>
+            </div>
 
-  </>
-)}
-{/* 📊 Render Charts - BELOW Total Rides, Fare, Distance */}
-{activePage === "dashboard" && chartData  && (
-  <div className="w-full mt-6 bg-white p-6 rounded-lg shadow">
-    <h2 className="text-lg font-semibold mb-4">Statistics Chart</h2>
-    {chartData && (chartData.rides.length || chartData.fare.length || chartData.distance.length) ? (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Pie Chart */}
+            <div className="bg-white p-6 rounded-lg shadow flex flex-col h-full">
+              <h2 className="text-lg font-semibold mb-4 text-center">Overall Distribution</h2>
+              <div className="flex-1 flex items-center justify-center">
+                <Pie
+                  data={{
+                    labels: ["Total Rides", "Total Fare", "Total Distance"],
+                    datasets: [
+                      { data: [stats.totalRides, stats.totalFare, stats.totalDistance], backgroundColor: ["blue", "green", "purple"] },
+                    ],
+                  }}
+                  options={{ responsive: true, maintainAspectRatio: false }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
-{selectedChart === "totalRides" && (
-  <Line
-    data={{
-      labels: chartData.rides.length ? chartData.rides.map(d => d._id || "Unknown") : ["No Data"],
-      datasets: [{ label: "Total Rides", data: chartData.rides.length ? chartData.rides.map(d => d.count || 0) : [0], borderColor: "blue" }]
-    }}
-    options={{ responsive: true }}
-  />
-)}
+  {activePage === "passengers" && (
+    <div className="bg-white p-6 rounded-lg shadow">
+      {/* <h2 className="text-2xl font-bold mb-4">Passengers</h2> */}
+      <Passengers />
+    </div>
+  )}
 
-{selectedChart === "totalFare" && (
-  <Bar
-    data={{
-      labels: chartData.fare.length ? chartData.fare.map(d => d._id || "Unknown") : ["No Data"],
-      datasets: [{ label: "Total Fare Earned", data: chartData.fare.length ? chartData.fare.map(d => d.amount || 0) : [0], backgroundColor: "green" }]
-    }}
-    options={{ responsive: true }}
-  />
-)}
-
-{selectedChart === "totalDistance" && (
-  <Bar
-    data={{
-      labels: chartData.distance.length ? chartData.distance.map(d => d._id || "Unknown") : ["No Data"],
-      datasets: [{ 
-        label: "Total Distance Covered", 
-        data: chartData.distance.length ? chartData.distance.map(d => d.distance || 0) : [0], 
-        backgroundColor: "#10B981"
-      }]
-    }}
-    options={{ responsive: true }}
-  />
-)}
-
-
-      </div>
-    ) : (
-      <div className="text-center text-gray-500 py-10 border-t border-gray-200">
-        📉 No Data Available
-      </div>
-    )}
-  </div>
-)}
-
-
-{activePage === "passengers" && <Passengers />}
-{activePage === "captains" && <Captains />}
-
+  {activePage === "captains" && (
+    <div className="bg-white p-6 rounded-lg shadow">
+      {/* <h2 className="text-2xl font-bold mb-4">Captains</h2> */}
+      <Captains />
+    </div>
+  )}
 </div>
 
 
