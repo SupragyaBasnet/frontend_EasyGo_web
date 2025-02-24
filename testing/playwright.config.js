@@ -1,8 +1,11 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  use: {
-    browserName: 'chromium', // ✅ Force Playwright to use Chromium
-    headless: false, // Run in non-headless mode for debugging
+  webServer: {
+    command: 'npm run dev', // Adjust this command to match your app's start command
+    port: 5173,
+    timeout: 120 * 1000, // Increase timeout if necessary
+    reuseExistingServer: !process.env.CI,
   },
+  // other config options...
 });
