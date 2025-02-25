@@ -34,17 +34,17 @@ const CaptainDetails = () => {
         />
         <div>
           <h3 className="text-lg font-medium capitalize">{`${captain.fullname.firstname} ${captain.fullname.lastname}`}</h3>
-          <p className="text-sm text-gray-600">Total Earnings: Rs.{captain.totalEarnings ?? "0"}</p>
+          <p className="text-sm text-gray-600">Total Earnings: Rs.{captain.fare ?? "0"}</p>
         </div>
       </div>
 
       <div className="flex bg-gray-100 rounded-xl justify-center gap-5 items-start p-4">
         <div className="text-center">
-          <h4 className="text-3xl mb-2 font-thin">{captain.hoursOnline ?? "0"}</h4>
-          <p className="text-sm text-gray-600">Hours Online</p>
+          <h4 className="text-3xl mb-2 font-thin">{captain.distance ?? "0"}</h4>
+          <p className="text-sm text-gray-600">Total Distance (km)</p>
         </div>
         <div className="text-center">
-          <h4 className="text-3xl mb-2 font-thin">{captain.ridesCompleted ?? "0"}</h4>
+          <h4 className="text-3xl mb-2 font-thin">{captain.rideCount ?? "0"}</h4>
           <p className="text-sm text-gray-600">Rides Completed</p>
         </div>
       </div>
