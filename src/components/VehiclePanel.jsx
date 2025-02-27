@@ -1,63 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+
+
+import React from "react";
 import Auto from "../assets/auto.webp";
 import Moto from "../assets/moto.jpeg";
 import WhiteCar from "../assets/white_car.png";
 
-
-const socket = io(import.meta.env.VITE_BASE_URL);
-
 const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {
-  const [vehicleAvailability, setVehicleAvailability] = useState({
-    car: { time: "Calculating...", riders: "0" },
-    moto: { time: "Calculating...", riders: "0" },
-    auto: { time: "Calculating...", riders: "0" },
-  });
-
-    useEffect(() => {
-      const fetchVehicleAvailability = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          
-          if (!token) {
-            console.error("No token found! User might not be logged in.");
-            return;
-          }
-      
-          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
-            headers: {Authorization: `Bearer ${localStorage.getItem("token")}`  },
-            withCredentials: true,
-          });
-      
-          console.log("API Response:", response.data);
-          setVehicleAvailability(response.data);
-        } catch (error) {
-          console.error("Error fetching vehicle availability:", error);
-          if (error.response?.status === 401) {
-            console.error("Unauthorized! Token might be invalid or expired.");
-          }
-        }
-      };
-      
-    
-      fetchVehicleAvailability();
-    }, []);
-    
-    useEffect(() => {
-      socket.on("vehicle-availability-update", (data) => {
-        console.log(" Received Socket Data:", data); //  Debugging
-        setVehicleAvailability(data);
-      });
-    
-      return () => {
-        socket.off("vehicle-availability-update"); // Cleanup on unmount
-      };
-    }, []);
-    
-    
   return (
-    <div className="fixed top-0 left-0 w-full h-full  z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
+    <div className="fixed top-0 left-0 w-full h-full z-50 overflow-y-auto px-4 sm:px-6 md:px-10">
       {/* Close Button */}
       <button
         className="absolute top-4 right-4 text-gray-600 text-3xl"
@@ -71,7 +21,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         Choose a Vehicle
       </h3>
 
-      {/*  Car Option */}
+      {/* Car Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -82,15 +32,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
       >
         <img className="h-14 sm:h-20" src={WhiteCar} alt="White Car" />
         <div className="ml-3 flex-grow text-center sm:text-left">
-          <h4 className="font-medium text-base sm:text-lg">
-            EasyGo
-            <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability?.car?.riders ?? "0"}
-            </span>
-          </h4>
-          <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability?.car?.time ? `${vehicleAvailability.car.time} min away` : "Calculating..."}
-          </h5>
+          <h4 className="font-medium text-base sm:text-lg">EasyGo</h4>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, compact rides
           </p>
@@ -100,7 +42,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         </h2>
       </div>
 
-      {/* 🏍️ Moto Option */}
+      {/* Moto Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -111,15 +53,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
       >
         <img className="h-14 sm:h-20" src={Moto} alt="Motorbike" />
         <div className="ml-3 flex-grow text-center sm:text-left">
-          <h4 className="font-medium text-base sm:text-lg">
-            Moto
-            <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability?.moto?.riders ?? "0"}
-            </span>
-          </h4>
-          <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability?.moto?.time ? `${vehicleAvailability.moto.time} min away` : "Calculating..."}
-          </h5>
+          <h4 className="font-medium text-base sm:text-lg">Moto</h4>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable, motorcycle rides
           </p>
@@ -129,7 +63,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         </h2>
       </div>
 
-      {/* 🚜 Auto Option */}
+      {/* Auto Option */}
       <div
         onClick={() => {
           setVehiclePanel(false);
@@ -140,15 +74,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
       >
         <img className="h-14 sm:h-20" src={Auto} alt="Auto Rickshaw" />
         <div className="ml-3 flex-grow text-center sm:text-left">
-          <h4 className="font-medium text-base sm:text-lg">
-           Auto
-            <span className="ml-2 text-gray-500">
-              <i className="ri-user-3-fill"></i> {vehicleAvailability?.auto?.riders ?? "0"}
-            </span>
-          </h4>
-          <h5 className="font-medium text-sm text-gray-600">
-            {vehicleAvailability?.auto?.time ? `${vehicleAvailability.auto.time} min away` : "Calculating..."}
-          </h5>
+          <h4 className="font-medium text-base sm:text-lg">Auto</h4>
           <p className="font-normal text-xs sm:text-sm text-gray-500">
             Affordable Auto rides
           </p>

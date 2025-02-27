@@ -219,9 +219,9 @@ const Home = () => {
         }
         );
       
-        console.log("💵 Fare Response:", response.data);
         
-      if (response.data && typeof response.data === "object") {
+        if (response.data && typeof response.data === "object") {
+        console.log("💵 Fare Response:", response.data);
         setFare(response.data);
         setVehiclePanel(true);
         setPanelOpen(false);
