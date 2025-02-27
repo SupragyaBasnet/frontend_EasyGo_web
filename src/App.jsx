@@ -15,18 +15,18 @@ import CaptainProtectWrapper from "./pages/CaptainProtectWrapper";
 import CaptainRiding from "./pages/CaptainRiding";
 import CaptainSettings from "./pages/CaptainSettings";
 import CaptainSignup from "./pages/CaptainSignup";
+import EasyRideRequest from "./pages/EasyRideRequest";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import Riding from "./pages/Riding";
-import Safety from "./pages/Safety";
 import Settings from "./pages/settings";
 import Start from "./pages/Start";
-import Tracking from "./pages/Tracking";
+import FastResponseTime from "./pages/FastResponseTime";
 import UserLogin from "./pages/UserLogin";
 import UserLogout from "./pages/UserLogout";
 import UserProtectWrapper from "./pages/UserProtectWrapper";
 import UserSignup from "./pages/UserSignup";
-import PaymentSuccess from "./pages/PaymentSuccess";
 
 
 
@@ -44,8 +44,8 @@ const App = () => {
       {/* Start Page */}
       <Route path="/" element={<Start />} />
       <Route path="/affordable" element={<Affordable />} />
-      <Route path="/safety" element={<Safety />} />
-      <Route path="/tracking" element={<Tracking />} />
+      <Route path="/EasyRideRequest" element={<EasyRideRequest />} />
+      <Route path="/FastResponseTime" element={<FastResponseTime />} />
 
       {/* User Routes */}
       <Route path="/login" element={<UserLogin />} />

@@ -1,25 +1,25 @@
 import React from 'react';
-import trackingImage1 from '../assets/tracking.jpg';
+import trackingImage1 from '../assets/tracking2.jpg';
 import trackingImage2 from '../assets/tracking1.jpg';
-import trackingImage3 from '../assets/tracking2.jpg';
+import trackingImage3 from '../assets/tracking2.webp';
 
-const Tracking = () => {
+const FastResponseTime = () => {
   const trackingFeatures = [
     {
       image: trackingImage1,
-      title: 'Real-Time Updates',
-      description: 'Stay informed with live tracking of your rides in real-time.',
+      title: 'Quick Driver Matching',
+      description: 'Get connected to a nearby driver instantly after requesting a ride.',
     },
     {
       image: trackingImage2,
-      title: 'Route Optimization',
-      description: 'Optimized routes to save time and ensure a smooth journey.',
+      title: 'Efficient Route Selection',
+      description: 'Drivers follow optimized routes to get you to your destination faster.',
     },
     {
       image: trackingImage3,
-      title: 'Destination Sharing',
-      description: 'Share your trip progress with family and friends securely.',
-    },
+      title: 'Rider & User Visibility',
+      description: 'Riders can see user details and users can view rider information for a safer experience.',
+    }
   ];
 
   return (
@@ -27,15 +27,15 @@ const Tracking = () => {
       {/* Header */}
       <header className="bg-green-500 text-white text-center py-6">
         <div>
-          <h1 className="text-4xl font-bold">Track Your Ride</h1>
-          <p className="mt-2 text-lg">Stay connected and updated with EasyGo tracking features.</p>
+          <h1 className="text-4xl font-bold">Fast Response Time</h1>
+          <p className="mt-2 text-lg">Experience quick ride confirmations and seamless travel.</p>
         </div>
       </header>
 
       {/* Main Section */}
       <main className="flex-grow">
         <section className="text-center max-w-7xl mx-auto p-6">
-          <h2 className="text-3xl font-bold text-green-500 mb-8">Our Tracking Features</h2>
+          <h2 className="text-3xl font-bold text-green-500 mb-8">Our Fast Response Features</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {trackingFeatures.map((feature, index) => (
               <div
@@ -64,4 +64,4 @@ const Tracking = () => {
   );
 };
 
-export default Tracking;
+export default FastResponseTime;

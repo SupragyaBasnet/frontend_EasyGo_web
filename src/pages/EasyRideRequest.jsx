@@ -1,24 +1,24 @@
 import React from 'react';
-import safetyImage1 from '../assets/safety.jpg';
-import safetyImage2 from '../assets/safety1.jpg';
-import safetyImage3 from '../assets/safety2.jpg';
+import rideImage1 from '../assets/safety.jpg';
+import rideImage2 from '../assets/safety1.jpg';
+import rideImage3 from '../assets/safety2.jpg';
 
-const Safety = () => {
-  const safetyFeatures = [
+const EasyRideRequest = () => {
+  const rideFeatures = [
     {
-      image: safetyImage1,
-      title: 'Verified Drivers',
-      description: 'All drivers are background checked and verified for your safety.',
+      image: rideImage1,
+      title: 'Quick Ride Requests',
+      description: 'Request a ride in just a few taps and get matched with a nearby driver instantly.',
     },
     {
-      image: safetyImage2,
-      title: 'Emergency Assistance',
-      description: 'Access 24/7 emergency support directly from the app.',
+      image: rideImage2,
+      title: 'Fast Driver Acceptance',
+      description: 'Drivers respond quickly, ensuring you don’t have to wait too long for your ride.',
     },
     {
-      image: safetyImage3,
-      title: 'Live Location Sharing',
-      description: 'Share your live location with family and friends for added peace of mind.',
+      image: rideImage3,
+      title: 'Simple & Affordable',
+      description: 'Enjoy a seamless and budget-friendly ride experience without any hassle.',
     },
   ];
 
@@ -26,16 +26,16 @@ const Safety = () => {
     <div className="flex flex-col min-h-screen bg-white">
       {/* Header */}
       <header className="bg-green-500 text-white text-center py-5 flex flex-col justify-center items-center">
-        <h1 className="text-4xl font-semibold">Safety First</h1>
-        <p className="mt-2 text-lg">Your safety is our priority at EasyGo.</p>
+        <h1 className="text-4xl font-semibold">Easy Ride Requests</h1>
+        <p className="mt-2 text-lg">Seamless booking and quick ride matching.</p>
       </header>
 
       {/* Main Content */}
       <main className="flex-grow">
         <section className="text-center my-10 mx-auto max-w-6xl bg-gray-100 rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-green-500 mb-6">Our Safety Features</h2>
+          <h2 className="text-2xl font-bold text-green-500 mb-6">How It Works</h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {safetyFeatures.map((feature, index) => (
+            {rideFeatures.map((feature, index) => (
               <div
                 key={index}
                 className="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transform hover:-translate-y-2 transition duration-300"
@@ -55,10 +55,10 @@ const Safety = () => {
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white text-center py-3 text-sm">
-        <p>&copy; 2025 EasyGo. Your trusted travel partner.</p>
+        <p>&copy; 2025 EasyGo. Making rides simpler.</p>
       </footer>
     </div>
   );
 };
 
-export default Safety;
+export default EasyRideRequest;

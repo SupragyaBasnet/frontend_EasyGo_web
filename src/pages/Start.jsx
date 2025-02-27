@@ -8,7 +8,7 @@ import carImage4 from "../assets/car4.jpg";
 import carImage5 from "../assets/car5.jpg";
 import EasyGo from "../assets/EasyGo.png";
 import safetyImage from "../assets/safety.jpg";
-import trackingImage from "../assets/tracking.jpg";
+import trackingImage from "../assets/tracking2.jpg";
 
 
 const Start = () => {
@@ -82,25 +82,25 @@ const Start = () => {
             </li>
             <li
               className="text-center cursor-pointer hover:shadow-lg"
-              onClick={() => navigate("/safety")}
+              onClick={() => navigate("/EasyRideRequest")}
             >
               <img
                 src={safetyImage}
-                alt="Safety features"
+                alt="EasyRideRequest features"
                 className="w-64 h-72 object-cover mx-auto rounded-md"
               />
-              <p className="mt-4 text-lg font-medium">Safety features</p>
+              <p className="mt-4 text-lg font-medium">Easy Ride Request</p>
             </li>
             <li
               className="text-center cursor-pointer hover:shadow-lg"
-              onClick={() => navigate("/tracking")}
+              onClick={() => navigate("/FastResponseTime")}
             >
               <img
                 src={trackingImage}
                 alt="Real-time tracking"
                 className="w-64 h-72 object-cover mx-auto rounded-md"
               />
-              <p className="mt-4 text-lg font-medium">Real-time tracking</p>
+              <p className="mt-4 text-lg font-medium">Fast Response Time</p>
             </li>
           </ul>
         </div>
