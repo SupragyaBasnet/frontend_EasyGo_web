@@ -37,7 +37,25 @@ const UserLogin = () => {
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("token", data.token);
-        navigate("/home");
+        const successMessage = document.createElement("div");
+        successMessage.innerText = "✅ Login successful! Redirecting...";
+        successMessage.style.position = "fixed";
+        successMessage.style.top = "20px";
+        successMessage.style.left = "50%";
+        successMessage.style.transform = "translateX(-50%)";
+        successMessage.style.backgroundColor = "#4CAF50";
+        successMessage.style.color = "white";
+        successMessage.style.padding = "12px 20px";
+        successMessage.style.borderRadius = "5px";
+        successMessage.style.zIndex = "1000";
+        document.body.appendChild(successMessage);
+  
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          document.body.removeChild(successMessage);
+          navigate("/home");
+        }, 1000);
+    
       }
     } catch (error) {
       const message =
@@ -65,6 +83,9 @@ const UserLogin = () => {
             />
           </div>
         </div>
+        <h3 className="text-xl font-semibold mb-6 text-gray-800 sm:text-2xl">
+          Login as a Passenger
+        </h3>
         <h3 className="block text-gray-700 font-medium mb-2">
           What's your phone number?
         </h3>

@@ -18,21 +18,28 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
     useEffect(() => {
       const fetchVehicleAvailability = async () => {
         try {
-          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-          });
-    
-          console.log(" API Response:", response.data); // Debug API response
-    
-          if (response.status === 200 && response.data) {
-            setVehicleAvailability(response.data);
-          } else {
-            console.error(" Invalid API response format:", response.data);
+          const token = localStorage.getItem("token");
+          
+          if (!token) {
+            console.error("No token found! User might not be logged in.");
+            return;
           }
+      
+          const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/vehicles/availability`, {
+            headers: {Authorization: `Bearer ${localStorage.getItem("token")}`  },
+            withCredentials: true,
+          });
+      
+          console.log("API Response:", response.data);
+          setVehicleAvailability(response.data);
         } catch (error) {
-          console.error(" Error fetching vehicle availability:", error);
+          console.error("Error fetching vehicle availability:", error);
+          if (error.response?.status === 401) {
+            console.error("Unauthorized! Token might be invalid or expired.");
+          }
         }
       };
+      
     
       fetchVehicleAvailability();
     }, []);
@@ -134,7 +141,7 @@ const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, far
         <img className="h-14 sm:h-20" src={Auto} alt="Auto Rickshaw" />
         <div className="ml-3 flex-grow text-center sm:text-left">
           <h4 className="font-medium text-base sm:text-lg">
-            UberAuto
+           Auto
             <span className="ml-2 text-gray-500">
               <i className="ri-user-3-fill"></i> {vehicleAvailability?.auto?.riders ?? "0"}
             </span>

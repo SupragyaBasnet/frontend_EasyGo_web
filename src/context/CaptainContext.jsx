@@ -29,6 +29,9 @@ const CaptainContext = ({ children }) => {
   
         console.log("Captain details fetched:", response.data);
         setCaptain(response.data.captain);
+        console.log("Captain in Context after fetching:", response.data.captain);
+      console.log("Total Fare:", response.data.captain?.totalFare);
+
         setError(null);
       } catch (err) {
         console.error("Error fetching captain details:", err.response || err.message);

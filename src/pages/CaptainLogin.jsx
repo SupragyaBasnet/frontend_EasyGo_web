@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link and useNavigate
 import EasyGoLogo from "../assets/EasyGo.png"; // Import the logo
 
-import { CaptainDataContext } from "../context/CaptainContext.jsx";
 import { Eye, EyeOff } from "lucide-react"; // Import eye icons
+import { CaptainDataContext } from "../context/CaptainContext.jsx";
 
 const CaptainLogin = () => {
   const [phonenumber, setPhonenumber] = useState("");
@@ -33,8 +33,29 @@ const CaptainLogin = () => {
       if (response.status === 200) {
         const data = response.data;
         setCaptain(data.captain);
+        // console.log("Captain Data after login:", data.captain);
+        // console.log("Total Fare:", data.captain?.totalFare);
         localStorage.setItem("token", data.token);
+
+      const successMessage = document.createElement("div");
+      successMessage.innerText = "✅ Login successful! Redirecting...";
+      successMessage.style.position = "fixed";
+      successMessage.style.top = "20px";
+      successMessage.style.left = "50%";
+      successMessage.style.transform = "translateX(-50%)";
+      successMessage.style.backgroundColor = "#4CAF50";
+      successMessage.style.color = "white";
+      successMessage.style.padding = "12px 20px";
+      successMessage.style.borderRadius = "5px";
+      successMessage.style.zIndex = "1000";
+      document.body.appendChild(successMessage);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
         navigate("/captain-home");
+      }, 1000);
+
       }
     } catch (error) {
       console.error("Login error:", error.response || error.message);
@@ -62,6 +83,9 @@ const CaptainLogin = () => {
             />
           </div>
         </div>
+        <h3 className="text-xl font-semibold mb-6 text-gray-800 sm:text-2xl">
+          Login as a Rider
+        </h3>
         <h3 className="block text-gray-700 font-medium mb-2">
           What's our Captain's phone number?
         </h3>

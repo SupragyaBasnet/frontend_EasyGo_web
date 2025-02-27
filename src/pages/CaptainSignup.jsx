@@ -58,7 +58,25 @@ const CaptainSignup = () => {
         const data = response.data;
         setCaptain(data.captain);
         localStorage.setItem("token", data.token);
+        const successMessage = document.createElement("div");
+      successMessage.innerText = "✅ Your captain account has been created successfully!";
+      successMessage.style.position = "fixed";
+      successMessage.style.top = "20px";
+      successMessage.style.left = "50%";
+      successMessage.style.transform = "translateX(-50%)";
+      successMessage.style.backgroundColor = "#4CAF50";
+      successMessage.style.color = "white";
+      successMessage.style.padding = "12px 20px";
+      successMessage.style.borderRadius = "5px";
+      successMessage.style.zIndex = "1000";
+      document.body.appendChild(successMessage);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
         navigate("/captain-login");
+      }, 1000);
+
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {

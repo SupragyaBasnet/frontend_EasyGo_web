@@ -49,7 +49,25 @@ const UserSignup = () => {
         const data = response.data;
         setUser(data.user);
         localStorage.setItem("token", data.token);
+        const successMessage = document.createElement("div");
+      successMessage.innerText = "✅ Your passenger account has been created successfully!";
+      successMessage.style.position = "fixed";
+      successMessage.style.top = "20px";
+      successMessage.style.left = "50%";
+      successMessage.style.transform = "translateX(-50%)";
+      successMessage.style.backgroundColor = "#4CAF50";
+      successMessage.style.color = "white";
+      successMessage.style.padding = "12px 20px";
+      successMessage.style.borderRadius = "5px";
+      successMessage.style.zIndex = "1000";
+      document.body.appendChild(successMessage);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
         navigate("/login");
+      }, 1000);
+        
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {

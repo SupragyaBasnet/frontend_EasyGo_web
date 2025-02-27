@@ -134,7 +134,25 @@ const handleRemovePicture = async () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       localStorage.removeItem("token");
-      navigate("/captain-login");
+      const successMessage = document.createElement("div");
+      successMessage.innerText = "Logged out successfully!";
+      successMessage.style.position = "fixed";
+      successMessage.style.top = "20px";
+      successMessage.style.left = "50%";
+      successMessage.style.transform = "translateX(-50%)";
+      successMessage.style.backgroundColor = "#4CAF50";
+      successMessage.style.color = "white";
+      successMessage.style.padding = "12px 20px";
+      successMessage.style.borderRadius = "5px";
+      successMessage.style.zIndex = "1000";
+      document.body.appendChild(successMessage);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
+        navigate("/captain-login");
+      }, 1000);
+  
     } catch (err) {
       console.error("Error logging out:", err);
     }
@@ -147,7 +165,24 @@ const handleRemovePicture = async () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       localStorage.removeItem("token");
-      navigate("/captain-signup");
+      const successMessage = document.createElement("div");
+      successMessage.innerText = "Account deleted successfully!";
+      successMessage.style.position = "fixed";
+      successMessage.style.top = "20px";
+      successMessage.style.left = "50%";
+      successMessage.style.transform = "translateX(-50%)";
+      successMessage.style.backgroundColor = "#4CAF50";
+      successMessage.style.color = "white";
+      successMessage.style.padding = "12px 20px";
+      successMessage.style.borderRadius = "5px";
+      successMessage.style.zIndex = "1000";
+      document.body.appendChild(successMessage);
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        document.body.removeChild(successMessage);
+        navigate("/captain-signup");
+      }, 1000);
     } catch (err) {
       console.error("Error deleting account:", err);
     }
@@ -378,7 +413,7 @@ const handleRemovePicture = async () => {
         <div className="bg-white p-6 rounded-lg shadow-lg w-72">
           <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
           <p className="text-gray-500">Are you sure you want to logout?</p>
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 justify-center">
             <button onClick={handleLogout} className="btn btn-error">Yes</button>
             <button onClick={() => setShowLogoutModal(false)} className="btn btn-neutral">No</button>
           </div>
@@ -392,7 +427,7 @@ const handleRemovePicture = async () => {
         <div className="bg-white p-6 rounded-lg shadow-lg w-72">
           <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
           <p className="text-gray-500">Are you sure you want to delete your account?</p>
-          <div className="flex gap-4 mt-4">
+          <div className="flex gap-4 mt-4 justify-center">
             <button onClick={handleDeleteAccount} className="btn btn-error">Yes</button>
             <button onClick={() => setShowDeleteModal(false)} className="btn btn-neutral">No</button>
           </div>
