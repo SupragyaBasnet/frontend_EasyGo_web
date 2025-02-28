@@ -84,69 +84,72 @@ test('CaptainSignup: registers a new captain and navigates to captain login page
   await expect(page).toHaveURL(/.*\/captain-login/);
 });
 
+
 test('UserLogin: logs in a user and navigates to home page', async ({ page }) => {
-  // Intercept POST requests to the /users/login endpoint.
   await page.route('**/users/login', async (route, request) => {
-    if (request.method() === 'POST') {
-      // Define a mock response for a successful login.
-      const mockResponse = {
-        user: { id: 1, phonenumber: '9876543210', email: 'john@example.com' },
-        token: 'fakeUserToken123'
-      };
-      // Fulfill the intercepted request with the mock response.
-      route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mockResponse),
-      });
-    } else {
-      route.continue();
-    }
+    const mockResponse = {
+      user: { id: 1, phonenumber: '9876543210', email: 'john@example.com' },
+      token: 'fakeUserToken123'
+    };
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(mockResponse),
+    });
   });
 
-  // Navigate to the UserLogin page. Adjust the URL to match your Vite app's URL.
   await page.goto('http://localhost:5173/login');
-
-  // Fill out the phone number and password fields.
+  
   await page.fill('input[placeholder="**********"]', '9876543210');
   await page.fill('input[placeholder="Enter your password"]', 'StrongP@ssword1');
-
-  // Submit the login form.
+  
+  // Log the current URL before clicking
+  console.log('Before login:', await page.url());
+  
   await page.click('button[type="submit"]');
+  
+  // Wait for navigation
+  await page.waitForNavigation({ timeout: 10000 });
 
-  // Verify that after a successful login, the app navigates to the /home route.
-  await expect(page).toHaveURL(/.*\/home/);
+  // Log the current URL after login
+  console.log('After login:', await page.url());
+
+  await expect(page).toHaveURL(/.*\/home/, { timeout: 10000 });
 });
 
 test('CaptainLogin: logs in a captain and navigates to captain home page', async ({ page }) => {
-  // Intercept POST requests to the /captains/login endpoint.
+  // Mock the captain login API response
   await page.route('**/captains/login', async (route, request) => {
-    if (request.method() === 'POST') {
-      console.log('Intercepted POST to /captains/login');
-      const mockResponse = {
-        captain: { id: 1, phonenumber: '9876543210', email: 'captain@example.com' },
-        token: 'fakeCaptainToken'
-      };
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mockResponse),
-      });
-    } else {
-      await route.continue();
-    }
+    const mockResponse = {
+      captain: { id: 1, phonenumber: '9876543210', email: 'captain@example.com' },
+      token: 'fakeCaptainToken123'
+    };
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(mockResponse),
+    });
   });
 
-  // Navigate to the CaptainLogin page.
+  // Go to the captain login page
   await page.goto('http://localhost:5173/captain-login');
 
-  // Fill out the login form.
-  await page.fill('input[placeholder="**********"]', '9876543210');
-  await page.fill('input[placeholder="Enter your password"]', 'StrongP@ssword1');
+  // Fill in the captain login form
+  await page.fill('input[placeholder="**********"]', '9876543210'); // Assuming it's phone number
+  await page.fill('input[placeholder="Enter your password"]', 'CaptainP@ssword1');
+  
+  // Log the current URL before clicking the submit button
+  console.log('Before captain login:', await page.url());
 
-  // Submit the login form.
+  // Click the submit button
   await page.click('button[type="submit"]');
+  
+  // Wait for the page to navigate after login
+  await page.waitForNavigation({ timeout: 10000 });
 
-  // Wait for navigation with an increased timeout.
+  // Log the current URL after the login attempt
+  console.log('After captain login:', await page.url());
+
+  // Now check if the URL changed to the captain's home page
   await expect(page).toHaveURL(/.*\/captain-home/, { timeout: 10000 });
 });

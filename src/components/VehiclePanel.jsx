@@ -2,7 +2,7 @@
 
 import React from "react";
 import Auto from "../assets/auto.webp";
-import Moto from "../assets/moto.jpeg";
+import Moto from "../assets/moto.webp";
 import WhiteCar from "../assets/white_car.png";
 
 const VehiclePanel = ({ setVehiclePanel, setConfirmRidePanel, selectVehicle, fare }) => {

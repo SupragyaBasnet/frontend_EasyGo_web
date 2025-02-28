@@ -103,9 +103,9 @@ const ForgotPassword = () => {
       setStatus("success");
 
       if (userType === "user") {
-        navigate("/home");
+        navigate("/login");
       } else if (userType === "captain") {
-        navigate("/captain-home");
+        navigate("/captain-login");
       }
     } catch (error) {
       setMessage(error.response?.data?.message || "Failed to reset password.");

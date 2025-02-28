@@ -3,9 +3,9 @@ import {
   ArcElement, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement,
   PointElement, Title, Tooltip
 } from "chart.js";
+import { LogOut, Menu as MenuIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import { LogOut, Menu as MenuIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EasyGoLogo from "../assets/EasyGo.png";
 import Captains from "./Captains";
@@ -31,6 +31,11 @@ export default function Dashboard() {
   const [chartData, setChartData] = useState({ rides: [], fare: [], distance: [] });
   const navigate = useNavigate();
   const [showSidebar, setShowSidebar] = useState(false);
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken"); // Clear the token
+    navigate("/admin_login"); // Redirect to the login page or home
+  };
+  
 
   useEffect(() => {
     const fetchAdmin = async () => {
@@ -136,7 +141,8 @@ export default function Dashboard() {
       </div>
 
       {/* Logout Button */}
-      <button className="flex items-center space-x-2 p-3 rounded-lg w-full bg-red-500 hover:bg-red-600">
+      <button className="flex items-center space-x-2 p-3 rounded-lg w-full bg-red-500 hover:bg-red-600"onClick={() => setShowLogoutModal(true)}  // This will open the logout modal
+  >
         <LogOut size={20} />
         <span>Logout</span>
       </button>
