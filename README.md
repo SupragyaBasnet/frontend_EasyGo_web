@@ -12,13 +12,17 @@ Admin panel
 ![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/5a54d85c1dbad4c5196ac451f01e0262a0beb006/Screen%20Shot%202025-03-01%20at%2014.11.09.png))
 ![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/5a54d85c1dbad4c5196ac451f01e0262a0beb006/Screen%20Shot%202025-03-01%20at%2014.11.13.png)
 
+Passenger Panel
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.06.38.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.07.03.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.07.16.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.07.26.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.07.33.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.07.41.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.09.55.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.10.02.png)
 
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
+Rider Panel
 ![image alt](image url)
 ![image alt](image url)
 ![image alt](image url)
