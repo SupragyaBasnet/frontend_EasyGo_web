@@ -23,10 +23,10 @@ Passenger Panel
 ![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/f4377a25ad4b4f74816d5aff60ddc4d20df4de91/Screen%20Shot%202025-03-01%20at%2014.10.02.png)
 
 Rider Panel
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
-![image alt](image url)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/13b92980476b11f43877490755ea640f3c64cae8/Screen%20Shot%202025-03-01%20at%2014.05.53.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/13b92980476b11f43877490755ea640f3c64cae8/Screen%20Shot%202025-03-01%20at%2014.09.31.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/13b92980476b11f43877490755ea640f3c64cae8/Screen%20Shot%202025-03-01%20at%2014.09.41.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/13b92980476b11f43877490755ea640f3c64cae8/Screen%20Shot%202025-03-01%20at%2014.09.48.png)
+![image alt](https://github.com/SupragyaBasnet/frontend_EasyGo_web/blob/13b92980476b11f43877490755ea640f3c64cae8/Screen%20Shot%202025-03-01%20at%2014.10.09.png)
 
 
